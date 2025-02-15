@@ -9,6 +9,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
+using System.Windows.Data;
+using MaterialDesignThemes.Wpf;
 
 namespace Yaoc.ViewModels;
 public partial class MainViewModel : ObservableObject {
@@ -58,6 +60,12 @@ public partial class MainViewModel : ObservableObject {
     [ObservableProperty]
     private string _errorMessage = string.Empty;
 
+    [ObservableProperty]
+    private bool _showErrorMessage = false;
+
+    [ObservableProperty]
+    private SnackbarMessageQueue _errorMessageQueue;
+
     private readonly IOllamaService _ollamaService;
     private readonly IStorageProvider _storageProvider;
     private readonly IDialogService _dialogService;
@@ -72,6 +80,7 @@ public partial class MainViewModel : ObservableObject {
         _storageProvider = storageProvider;
         _dialogService = dialogService;
         _botMessageStream = new StringBuilder();
+        _errorMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(5));
 
         Task.WhenAll(
             Task.Run(LoadModels),
@@ -108,7 +117,6 @@ public partial class MainViewModel : ObservableObject {
             }
 
             CanSelectModel = !CurrentConversation.Messages.Any(x => x.Role == ChatRole.User);
-
         }
     }
 
@@ -123,19 +131,13 @@ public partial class MainViewModel : ObservableObject {
 
             _currentChat.Model = SelectedModel;
 
-
             Application.Current.Dispatcher.Invoke(async () => {
-                IsWaitingForResponse = true;
-                RefreshProperty(nameof(IsWaitingForResponse));
-                ErrorMessage = string.Empty;
-                RefreshProperty(nameof(ErrorMessage));
-                
+                StartWaitingForResponse();
+
                 try {
                     await foreach (var response in _ollamaService.SendMessage(_currentChat, message)) {
-
                         if (IsWaitingForResponse) {
-                            IsWaitingForResponse = false;
-                            RefreshProperty(nameof(IsWaitingForResponse));
+                            StopWaitingForResponse();
                         }
 
                         await Task.Delay(1); // Needed to prevent UI from freezing. Task.Yield() doesn't work.
@@ -146,15 +148,12 @@ public partial class MainViewModel : ObservableObject {
                     _botMessageStream.Clear();
                     RefreshProperty(nameof(BotMessage));
 
-                } catch (Exception e) {
-                    Debug.WriteLine(e.Message);
-                    IsWaitingForResponse = false;
-                    RefreshProperty(nameof(IsWaitingForResponse));
-                    ErrorMessage = e.Message;
-                    RefreshProperty(nameof(ErrorMessage));
+                } catch (Exception ex) {
+                    Debug.WriteLine(ex.Message);
+                    StopWaitingForResponse();
+                    DisplayErrorMessage(ex);
                 }
             }).ContinueWith(_ => _storageProvider.SaveConversations(Conversations));
-
         }
     }
 
@@ -181,13 +180,27 @@ public partial class MainViewModel : ObservableObject {
         if (conversation == null) return;
 
         var message = $"Are you sure you want to delete conversation '{conversation.Name}'?";
-        var result = await _dialogService.ShowYesNoDialog("Delete conversation", message);
 
-        if (result) {
-            Conversations.Remove(conversation);
+        try {
+            var result = await _dialogService.ShowYesNoDialog("Delete conversation", message);
 
-            await _storageProvider.SaveConversations(Conversations);
+            if (result) {
+                Conversations.Remove(conversation);
+
+                await _storageProvider.SaveConversations(Conversations);
+            }
+        } catch (InvalidOperationException ex) {
+            Debug.WriteLine(ex.Message);
+            DisplayErrorMessage(ex, true);
+        } catch (Exception ex) {
+            Debug.WriteLine(ex.Message);
+            DisplayErrorMessage(ex, true);
         }
+    }
+
+    [RelayCommand]
+    private async Task OpenSettingsDialog() {
+        var result = await _dialogService.ShowSettingsDialog();
     }
 
     [RelayCommand]
@@ -195,6 +208,28 @@ public partial class MainViewModel : ObservableObject {
         CurrentConversation.Name = conversationName;
 
         await _storageProvider.SaveConversations(Conversations);
+    }
+
+    private void StartWaitingForResponse() {
+        IsWaitingForResponse = true;
+        RefreshProperty(nameof(IsWaitingForResponse));
+    }
+
+    private void StopWaitingForResponse() {
+        IsWaitingForResponse = false;
+        RefreshProperty(nameof(IsWaitingForResponse));
+    }
+
+    private void DisplayErrorMessage(string message, bool showError = false) {
+        ErrorMessageQueue.Enqueue(message, "COPY", () => Clipboard.SetData(DataFormats.Text, message));
+        ShowErrorMessage = showError;
+        RefreshProperty(nameof(ErrorMessage));
+    }
+
+    private void DisplayErrorMessage(Exception ex, bool showError = false) {
+        ErrorMessageQueue.Enqueue(ex.Message, "COPY", () => Clipboard.SetData(DataFormats.Text, ex.ToString()));
+        ShowErrorMessage = showError;
+        RefreshProperty(nameof(ErrorMessage));
     }
 
     private void RefreshProperty(string propertyName) {

@@ -46,9 +46,15 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<Label Grid.Row="0"
-				   Content="Conversations" />
-			<ListView Grid.Row="1"
+			<!--<Label Grid.Row="0"
+				   Content="Conversations" />-->
+			<Button Grid.Row="2"
+					Content="{materialDesign:PackIcon Kind=CogOutline, Size=26}"
+					Style="{StaticResource MaterialDesignOutlinedButton}"
+					VerticalAlignment="Bottom"
+					Margin="3"
+					Command="{Binding OpenSettingsDialogCommand}" />
+			<ListView Grid.Row="0"
 					  x:Name="conversationsList"
 					  ItemsSource="{Binding Conversations}"
 					  SelectedItem="{Binding CurrentConversation}">
@@ -87,9 +93,9 @@
 					</DataTemplate>
 				</ListView.ItemTemplate>
 			</ListView>
-			<Button Grid.Row="2"
+			<Button Grid.Row="1"
 					Content="{materialDesign:PackIcon Kind=ChatPlus, Size=26}"
-					Style="{StaticResource MaterialDesignRaisedButton}"
+					Style="{StaticResource MaterialDesignFlatMidBgButton}"
 					VerticalAlignment="Bottom"
 					Margin="3"
 					Command="{Binding CreateConversationCommand}">
@@ -226,7 +232,7 @@
 				<Button Grid.Column="1"
 						Margin="5,0,5,0"
 						Content="{materialDesign:PackIcon Kind=AttachFile}"
-						Style="{DynamicResource MaterialDesignFlatButton}" />
+						Style="{DynamicResource MaterialDesignIconButton}" />
 
 				<Button Grid.Column="2"
 						Name="sendButton"
@@ -238,6 +244,13 @@
 			</Grid>
 
 		</Grid>
+
+		<materialDesign:Snackbar Grid.Column="0"
+		Grid.ColumnSpan="2"
+								 HorizontalAlignment="Stretch"
+								 IsActive="{Binding ShowErrorMessage}"
+								 MessageQueue="{Binding ErrorMessageQueue}" />
+
 
 		<!-- Dialog host -->
 		<Grid Grid.Column="0"
