@@ -4,6 +4,7 @@ using Yaoc.ViewModels;
 using Yaoc.Views;
 using Microsoft.Extensions.DependencyInjection;
 using OllamaSharp;
+using Yaoc.Dialogs;
 
 namespace Yaoc.Extensions;
 public static class Configuration {
@@ -17,6 +18,7 @@ public static class Configuration {
 
     public static IServiceCollection RegisterViewModels(this IServiceCollection services) {
         services.AddScoped<MainViewModel>();
+        services.AddScoped<SettingsDialogViewModel>();
 
         return services;
     }
@@ -27,12 +29,9 @@ public static class Configuration {
         return services;
     }
 
-    public static IServiceCollection RegisterChatClients(this IServiceCollection services) {
-        var client = new OllamaApiClient(new Uri("http://127.0.0.1:11434"));
-
-        services.AddSingleton<IOllamaApiClient>(client);
-        services.AddSingleton(new Chat(client));
-
+    public static IServiceCollection RegisterDialogs(this IServiceCollection services) {
+        services.AddSingleton<YesNoDialog>();
+        services.AddSingleton<SettingsDialog>();
 
         return services;
     }
