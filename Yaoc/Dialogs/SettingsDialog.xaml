@@ -72,13 +72,6 @@
 					Command="{Binding TestConnectionCommand}" />
 		</md:Badged>
 
-
-		<Button Grid.Row="4"
-				Grid.Column="0"
-				Content="Save"
-				Style="{StaticResource MaterialDesignRaisedButton}"
-				Margin="5" />
-
 		<Button Grid.Row="4"
 				Grid.Column="1"
 				Content="Close"
