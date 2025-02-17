@@ -13,11 +13,8 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
 			<!-- Ollama Url -->
-			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
-			<!-- Save / Close buttons -->
 		</Grid.RowDefinitions>
 
 		<Grid.ColumnDefinitions>
@@ -72,13 +69,5 @@
 					Margin="5"
 					Command="{Binding TestConnectionCommand}" />
 		</md:Badged>
-
-		<Button Grid.Row="4"
-				Grid.Column="1"
-				Content="Close"
-				Style="{StaticResource MaterialDesignRaisedButton}"
-				Margin="5"
-				Command="{x:Static md:DialogHost.CloseDialogCommand}"
-				IsCancel="True" />
 	</Grid>
 </UserControl>

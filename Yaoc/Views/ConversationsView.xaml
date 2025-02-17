@@ -9,8 +9,7 @@
 			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:customBehaviours="clr-namespace:Yaoc.Behaviours"
 			 xmlns:uc="clr-namespace:Yaoc.Controls"
-			 mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+			 mc:Ignorable="d">
 
 	<UserControl.Resources>
 		<converters:StringToVisibilityConverter x:Key="stringToVisibilityConverter" />
@@ -20,7 +19,7 @@
 		<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
 	</UserControl.Resources>
 
-	<Grid Margin="10">
+	<Grid Margin="14">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="300" />
 			<ColumnDefinition Width="*" />
@@ -28,7 +27,7 @@
 
 		<!-- Conversation List -->
 		<Grid Grid.Column="0"
-			  Margin="5, 0, 5, 0">
+		Margin="-5,0,10,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
@@ -93,7 +92,7 @@
 					  HorizontalAlignment="Right"
 					  Background="LightGray"
 					  ShowsPreview="True"
-					  Width="3" />
+					  Width="3"/>
 
 		<!-- Conversation selected -->
 		<Grid Grid.Column="1"
