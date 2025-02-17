@@ -3,7 +3,6 @@ using Yaoc.Services;
 using Yaoc.ViewModels;
 using Yaoc.Views;
 using Microsoft.Extensions.DependencyInjection;
-using OllamaSharp;
 using Yaoc.Dialogs;
 
 namespace Yaoc.Extensions;
@@ -18,20 +17,22 @@ public static class Configuration {
 
     public static IServiceCollection RegisterViewModels(this IServiceCollection services) {
         services.AddScoped<MainViewModel>();
-        services.AddScoped<SettingsDialogViewModel>();
+        services.AddScoped<ConversationsViewModel>();
+        services.AddScoped<SettingsViewModel>();
 
         return services;
     }
 
     public static IServiceCollection RegisterViews(this IServiceCollection services) {
         services.AddSingleton<MainWindow>();
+        services.AddSingleton<ConversationsView>();
+        services.AddSingleton<SettingsView>();
 
         return services;
     }
 
     public static IServiceCollection RegisterDialogs(this IServiceCollection services) {
         services.AddSingleton<YesNoDialog>();
-        services.AddSingleton<SettingsDialog>();
 
         return services;
     }

@@ -12,10 +12,10 @@ namespace Yaoc {
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
-        private readonly IHost _host;
+        public static IHost Host { get; private set; }
 
         public App() {
-            _host = new HostBuilder()
+            Host = new HostBuilder()
                 .ConfigureAppConfiguration((context, config) => {
                     config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                 })
@@ -31,13 +31,13 @@ namespace Yaoc {
         protected override void OnStartup(StartupEventArgs e) {
             base.OnStartup(e);
 
-            var mainWindow = _host.Services.GetService<MainWindow>();
+            var mainWindow = Host.Services.GetService<MainWindow>();
             mainWindow?.Show();
         }
 
         protected override async void OnExit(ExitEventArgs e) {
-            using (_host) {
-                await _host.StopAsync();
+            using (Host) {
+                await Host.StopAsync();
             }
 
             base.OnExit(e);

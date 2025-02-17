@@ -10,7 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dialogs\SettingsDialog.xaml.cs" />
+    <Compile Remove="Dialogs\SettingsDialogViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="Dialogs\SettingsDialog.xaml" />
   </ItemGroup>
 
   <ItemGroup>

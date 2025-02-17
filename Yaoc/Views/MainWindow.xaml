@@ -4,261 +4,79 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
-		xmlns:local="clr-namespace:Yaoc"
-		xmlns:converters="clr-namespace:Yaoc.Converters"
-		xmlns:models="clr-namespace:Yaoc.Models"
-		xmlns:uc="clr-namespace:Yaoc.Controls"
-		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-		xmlns:customBehaviours="clr-namespace:Yaoc.Behaviours"
+		xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+		xmlns:views="clr-namespace:Yaoc.Views"
+		xmlns:vm="clr-namespace:Yaoc.ViewModels"
 		TextElement.Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
 		Background="{DynamicResource MaterialDesign.Brush.Background}"
 		TextElement.FontWeight="Medium"
 		TextElement.FontSize="14"
-		FontFamily="{materialDesign:MaterialDesignFont}"
+		FontFamily="{md:MaterialDesignFont}"
 		mc:Ignorable="d"
 		Style="{StaticResource MaterialDesignWindow}"
 		WindowStartupLocation="CenterScreen"
-		Title="MainWindow"
+		Title="YAOC - Yet Another Ollama Client"
 		Height="768"
 		Width="1366">
 
-	<Window.Resources>
-		<converters:StringToVisibilityConverter x:Key="stringToVisibilityConverter" />
-		<converters:ConversationToVisibilityConverter x:Key="conversationToVisibilityConverter" />
-		<converters:RoleToColorConverter x:Key="roleToColorConverter" />
-		<converters:EmptyStringToBooleanConverter x:Key="emptyStringToBooleanConverter" />
-		<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
-	</Window.Resources>
+	<md:Card>
+		<TabControl md:NavigationRailAssist.ShowSelectionBackground="True"
+					SnapsToDevicePixels="True"
+					Style="{StaticResource MaterialDesignNavigationRailTabControl}"
+					TabStripPlacement="Left">
+			<!-- Conversations -->
+			<TabItem>
+				<TabItem.Header>
+					<StackPanel Width="Auto"
+								Height="Auto">
+						<md:PackIcon Kind="Folder"
+									 Width="24"
+									 Height="24"
+									 HorizontalAlignment="Center" />
+						<TextBlock Text="Chats"
+								   HorizontalAlignment="Center" />
+					</StackPanel>
+				</TabItem.Header>
 
+				<views:ConversationsView />
+			</TabItem>
 
-	<Grid Margin="10">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="300" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
+			<!-- Models -->
+			<TabItem>
+				<TabItem.Header>
+					<StackPanel Width="Auto"
+								Height="Auto">
+						<md:PackIcon Kind="Cube"
+									 Width="24"
+									 Height="24"
+									 HorizontalAlignment="Center" />
+						<TextBlock Text="Models"
+								   HorizontalAlignment="Center" />
+					</StackPanel>
+				</TabItem.Header>
 
-		<!-- Conversation List -->
-		<Grid Grid.Column="0"
-			  Margin="5, 0, 5, 0">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-
-			<!--<Label Grid.Row="0"
-				   Content="Conversations" />-->
-			<Button Grid.Row="2"
-					Content="{materialDesign:PackIcon Kind=CogOutline, Size=26}"
-					Style="{StaticResource MaterialDesignOutlinedButton}"
-					VerticalAlignment="Bottom"
-					Margin="3"
-					Command="{Binding OpenSettingsDialogCommand}" />
-			<ListView Grid.Row="0"
-					  x:Name="conversationsList"
-					  ItemsSource="{Binding Conversations}"
-					  SelectedItem="{Binding CurrentConversation}">
-				<ListView.Resources>
-					<Style TargetType="ListViewItem">
-						<Setter Property="Template">
-							<Setter.Value>
-								<ControlTemplate TargetType="ListViewItem">
-									<Border Margin="0"
-											Padding="0" />
-								</ControlTemplate>
-							</Setter.Value>
-						</Setter>
-					</Style>
-				</ListView.Resources>
-				<ListView.ItemContainerStyle>
-					<Style TargetType="ListViewItem"
-						   BasedOn="{StaticResource MaterialDesignListBoxItem}">
-						<Setter Property="HorizontalContentAlignment"
-								Value="Stretch" />
-						<Setter Property="Padding"
-								Value="0" />
-					</Style>
-				</ListView.ItemContainerStyle>
-				<ListView.ItemTemplate>
-					<DataTemplate>
-						<uc:ListViewItemConversation x:Name="editableItem">
-							<behaviours:Interaction.Triggers>
-								<behaviours:EventTrigger EventName="ConversationNameChanged">
-									<behaviours:InvokeCommandAction Command="{Binding DataContext.ChangeConversationNameCommand, ElementName=conversationsList}"
-																	EventArgsParameterPath="ConversationName"
-																	PassEventArgsToCommand="True" />
-								</behaviours:EventTrigger>
-							</behaviours:Interaction.Triggers>
-						</uc:ListViewItemConversation>
-					</DataTemplate>
-				</ListView.ItemTemplate>
-			</ListView>
-			<Button Grid.Row="1"
-					Content="{materialDesign:PackIcon Kind=ChatPlus, Size=26}"
-					Style="{StaticResource MaterialDesignFlatMidBgButton}"
-					VerticalAlignment="Bottom"
-					Margin="3"
-					Command="{Binding CreateConversationCommand}">
-				<Button.ToolTip>
-					<ToolTip>
-						<TextBlock Text="Start a new chat" />
-					</ToolTip>
-				</Button.ToolTip>
-					</Button>
-		</Grid>
-
-		<GridSplitter Grid.Column="0"
-					  VerticalAlignment="Stretch"
-					  HorizontalAlignment="Right"
-					  Background="LightGray"
-					  ShowsPreview="True"
-					  Width="3" />
-
-		<!-- Conversation selected -->
-		<Grid Grid.Column="1"
-			  Visibility="{Binding SelectedItem,ElementName=conversationsList,Converter={StaticResource conversationToVisibilityConverter}}">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-
-			<TextBlock Grid.Row="0"
-					   Text="{Binding CurrentConversation.Id, StringFormat=ID: {0}}"
-					   Style="{DynamicResource MaterialDesignLabelSmallTextBlock}" />
-
-			<!-- Model selection -->
-			<Grid Grid.Row="1"
-				  Margin="10">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-
-				<TextBlock Grid.Column="0"
-						   Text="Select model:"
-						   Margin="0,0,5,0"
+				<TextBlock Text="Models"
+						   HorizontalAlignment="Center"
 						   VerticalAlignment="Center" />
+			</TabItem>
 
-				<ComboBox Grid.Column="1"
-						  Name="userComboBox"
-						  ItemsSource="{Binding Models}"
-						  HorizontalAlignment="Stretch"
-						  SelectedItem="{Binding SelectedModel}"
-						  IsEnabled="{Binding CanSelectModel}" />
+			<!-- Settings -->
+			<TabItem>
+				<TabItem.Header>
+					<StackPanel Width="Auto"
+								Height="Auto">
+						<md:PackIcon Kind="Cog"
+									 Width="24"
+									 Height="24"
+									 HorizontalAlignment="Center" />
+						<TextBlock Text="Settings"
+								   HorizontalAlignment="Center" />
+					</StackPanel>
+				</TabItem.Header>
 
-			</Grid>
-
-			<!-- Messages Section -->
-
-			<ScrollViewer x:Name="messagesScrollbar"
-						  Grid.Row="2"
-						  Margin="5"
-						  VirtualizingPanel.ScrollUnit="Pixel"
-						  HorizontalScrollBarVisibility="Disabled">
-				<behaviours:Interaction.Behaviors>
-					<customBehaviours:ScrollBarAutoBehavior />
-				</behaviours:Interaction.Behaviors>
-				<StackPanel>
-					<ItemsControl ItemsSource="{Binding CurrentConversation.Messages}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<uc:ListViewItemMessage DataContext="{Binding}" />
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
-
-					<!-- Bot textbox -->
-					<TextBox Text="{Binding BotMessage,Mode=OneWay}"
-							 AcceptsReturn="True"
-							 TextWrapping="Wrap"
-							 Height="Auto"
-							 Background="Gainsboro"
-							 Visibility="{Binding BotMessage,Converter={StaticResource stringToVisibilityConverter}}" />
-
-					<ProgressBar IsIndeterminate="True"
-								 Style="{StaticResource MaterialDesignCircularProgressBar}"
-								 Value="0"
-								 Visibility="{Binding IsWaitingForResponse,Converter={StaticResource booleanToVisibilityConverter}}"/>
-
-					<TextBlock Text="{Binding ErrorMessage}"
-							   Background="Tomato"
-							   Visibility="{Binding ErrorMessage, Converter={StaticResource stringToVisibilityConverter}}" />
-
-				</StackPanel>
-			</ScrollViewer>
-
-			<!-- Input Section -->
-			<Grid Grid.Row="3">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-
-				<!-- Change background color to inverted surface -->
-				<TextBox Grid.Column="0"
-						 Name="inputTextBox"
-						 Margin="5"
-						 MaxHeight="100"
-						 Text="{Binding UserMessage, UpdateSourceTrigger=PropertyChanged}"
-						 TextWrapping="Wrap"
-						 VerticalScrollBarVisibility="Auto"
-						 materialDesign:HintAssist.Hint="Write your message"
-						 VerticalContentAlignment="Center">
-
-					<behaviours:Interaction.Behaviors>
-						<customBehaviours:TextBoxAddNewLineBehavior />
-					</behaviours:Interaction.Behaviors>
-
-					<TextBox.InputBindings>
-						<KeyBinding Key="Return"
-									Command="{Binding SendMessageCommand}" />
-						<KeyBinding Key="Enter"
-									Command="{Binding SendMessageCommand}" />
-					</TextBox.InputBindings>
-
-					<TextBox.ToolTip>
-						<ToolTip>
-							<StackPanel>
-								<TextBlock Text="Press 'Enter' to send the message." />
-								<TextBlock Text="Press 'Shift + Enter' to add a new line." />
-							</StackPanel>
-						</ToolTip>
-					</TextBox.ToolTip>
-				</TextBox>
-
-				<Button Grid.Column="1"
-						Margin="5,0,5,0"
-						Content="{materialDesign:PackIcon Kind=AttachFile}"
-						Style="{DynamicResource MaterialDesignIconButton}" />
-
-				<Button Grid.Column="2"
-						Name="sendButton"
-						Margin="0,0,5,0"
-						Content="{materialDesign:PackIcon Kind=Send}"
-						Style="{StaticResource MaterialDesignFloatingActionButton}"
-						IsEnabled="{Binding SelectedModel,Converter={StaticResource emptyStringToBooleanConverter}}"
-						Command="{Binding SendMessageCommand}" />
-			</Grid>
-
-		</Grid>
-
-		<materialDesign:Snackbar Grid.Column="0"
-		Grid.ColumnSpan="2"
-								 HorizontalAlignment="Stretch"
-								 IsActive="{Binding ShowErrorMessage}"
-								 MessageQueue="{Binding ErrorMessageQueue}" />
-
-
-		<!-- Dialog host -->
-		<Grid Grid.Column="0"
-			  Grid.ColumnSpan="2">
-			<materialDesign:DialogHost Identifier="RootDialogHost">
-			</materialDesign:DialogHost>
-		</Grid>
-
-	</Grid>
+				<views:SettingsView />
+			</TabItem>
+		</TabControl>
+	</md:Card>
 
 </Window>

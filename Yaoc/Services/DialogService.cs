@@ -1,15 +1,12 @@
 ﻿using Yaoc.Dialogs;
 using MaterialDesignThemes.Wpf;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
 
 namespace Yaoc.Services;
 
 public interface IDialogService {
     Task<bool> ShowYesNoDialog(string title, string message);
-    Task<bool> ShowSettingsDialog();
 }
 
 public class DialogService : IDialogService {
@@ -25,20 +22,6 @@ public class DialogService : IDialogService {
         ThrowIfNull(dialog, typeof(YesNoDialog));
 
         dialog.DataContext = new { Title = title, Message = message };
-
-        object? result = await DialogHost.Show(dialog, "RootDialogHost");
-
-        return result switch {
-            true => true,
-            false => false,
-            _ => false
-        };
-    }
-
-    public async Task<bool> ShowSettingsDialog() {
-        var dialog = _host.Services.GetService<SettingsDialog>();
-
-        ThrowIfNull(dialog, typeof(SettingsDialog));
 
         object? result = await DialogHost.Show(dialog, "RootDialogHost");
 

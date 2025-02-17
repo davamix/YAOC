@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="Yaoc.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Yaoc.Views"
+			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+			 Height="800"
+			 Width="600">
+
+	<Grid Margin="24">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<!-- Ollama Url -->
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+			<!-- Save / Close buttons -->
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+
+		<TextBlock Grid.Row="0"
+				   Grid.Column="0"
+				   Grid.ColumnSpan="2"
+				   Text="Settings"
+				   Style="{StaticResource MaterialDesignHeadline4TextBlock}" />
+
+		<Separator Grid.Row="1"
+				   Grid.Column="0"
+				   Grid.ColumnSpan="2"
+				   Margin="0,5,0,15" />
+
+		<TextBox Grid.Row="2"
+				 Grid.Column="0"
+				 VerticalAlignment="Center"
+				 md:HintAssist.Hint="Ollama Server Url"
+				 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+				 Margin="5"
+				 Text="{Binding OllamaServerUrl}" />
+
+		<md:Badged Grid.Row="2"
+				   Grid.Column="1"
+				   BadgeColorZoneMode="SecondaryMid">
+			<md:Badged.Style>
+				<Style TargetType="md:Badged">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding IsConnectionValid}"
+									 Value="True">
+							<Setter Property="Badge"
+									Value="{md:PackIcon Check}" />
+							<Setter Property="BadgeBackground"
+									Value="#00b23e" />
+						</DataTrigger>
+						<DataTrigger Binding="{Binding IsConnectionValid}"
+									 Value="False">
+							<Setter Property="Badge"
+									Value="{md:PackIcon Exclamation}" />
+							<Setter Property="BadgeBackground"
+									Value="#f85e2e" />
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</md:Badged.Style>
+			<Button Content="Test"
+					Style="{StaticResource MaterialDesignRaisedButton}"
+					Margin="5"
+					Command="{Binding TestConnectionCommand}" />
+		</md:Badged>
+
+		<Button Grid.Row="4"
+				Grid.Column="1"
+				Content="Close"
+				Style="{StaticResource MaterialDesignRaisedButton}"
+				Margin="5"
+				Command="{x:Static md:DialogHost.CloseDialogCommand}"
+				IsCancel="True" />
+	</Grid>
+</UserControl>
