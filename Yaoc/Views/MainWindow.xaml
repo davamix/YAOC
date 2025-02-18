@@ -55,9 +55,7 @@
 					</StackPanel>
 				</TabItem.Header>
 
-				<TextBlock Text="Models"
-						   HorizontalAlignment="Center"
-						   VerticalAlignment="Center" />
+				<views:ModelsView />
 			</TabItem>
 
 			<!-- Settings -->

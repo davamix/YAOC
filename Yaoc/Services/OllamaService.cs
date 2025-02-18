@@ -1,12 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
 using OllamaSharp;
+using OllamaSharp.Models;
 using System.Net.Http;
 
 namespace Yaoc.Services;
 
 public interface IOllamaService {
     IAsyncEnumerable<string> SendMessage(Chat chat, string message);
-    Task<List<string>> GetModelsAsync();
+    Task<List<string>> GetLocalModelNamesAsync();
+    Task<List<Model>> GetLocalModelsAsync();
     Chat CreateChat();
 
     Task<bool> TestConnection(string ollamaServerUrl);
@@ -48,10 +50,16 @@ internal class OllamaService : IOllamaService {
         }
     }
 
-    public async Task<List<string>> GetModelsAsync() {
+    public async Task<List<string>> GetLocalModelNamesAsync() {
         var models = await _ollamaApiClient.ListLocalModelsAsync();
 
         return models.Select(model => model.Name).ToList();
+    }
+
+    public async Task<List<Model>> GetLocalModelsAsync() {
+        var models = await _ollamaApiClient.ListLocalModelsAsync();
+
+        return models.ToList();
     }
 
     public async Task<bool> TestConnection(string ollamaServerUrl) {

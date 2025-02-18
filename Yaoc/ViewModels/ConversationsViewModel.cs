@@ -89,7 +89,7 @@ public partial class ConversationsViewModel : ObservableObject {
     }
 
     private async Task LoadModels() {
-        foreach (var model in await _ollamaService.GetModelsAsync()) {
+        foreach (var model in await _ollamaService.GetLocalModelNamesAsync()) {
             Models.Add(model);
         }
     }

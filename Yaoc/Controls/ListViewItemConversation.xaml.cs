@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Yaoc.Extensions.UI;
 
 namespace Yaoc.Controls;
 
@@ -47,7 +48,7 @@ public partial class ListViewItemConversation : ListViewItem {
             valueTextBox.Focus();
             valueTextBox.SelectAll();
         } else {
-            var listView = FindAncestor<ListView>(sender as DependencyObject);
+            var listView = (sender as DependencyObject).FindAncestor<ListView>();
 
             if (listView != null) {
                 listView.SelectedItem = this.DataContext;
@@ -74,16 +75,5 @@ public partial class ListViewItemConversation : ListViewItem {
         valueLabel.Content = valueTextBox.Text;
 
         RaiseEvent(new ConversationNameChangedEventArgs(ConversationNameChangedEvent, this, valueTextBox.Text));
-    }
-
-    public static T FindAncestor<T>(DependencyObject dObj) where T : DependencyObject {
-        var uiElement = dObj;
-        while (uiElement != null) {
-            uiElement = VisualTreeHelper.GetParent(uiElement as Visual ?? new UIElement())
-                ?? LogicalTreeHelper.GetParent(uiElement);
-
-            if (uiElement is T) return (T)uiElement;
-        }
-        return null;
     }
 }

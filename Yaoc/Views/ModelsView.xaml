@@ -1,0 +1,218 @@
+﻿<UserControl x:Class="Yaoc.Views.ModelsView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:local="clr-namespace:Yaoc.Views"
+			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:uc="clr-namespace:Yaoc.Controls"
+			 xmlns:converters="clr-namespace:Yaoc.Converters"
+			 mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<converters:SelectedItemVisibilityConverter x:Key="selectedItemVisibilityConverter" />
+	</UserControl.Resources>
+	<Grid Margin="24">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<TextBlock Grid.Row="0"
+				   Text="Models"
+				   Style="{StaticResource MaterialDesignHeadline4TextBlock}" />
+
+		<Separator Grid.Row="1"
+				   Grid.Column="0"
+				   Grid.ColumnSpan="2"
+				   Margin="0,5,0,15" />
+
+		<Grid Grid.Row="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="2*" />
+			</Grid.ColumnDefinitions>
+
+			<!-- Model Lists -->
+			<StackPanel Grid.Row="0">
+				<TextBlock Text="Local models"
+						   Style="{StaticResource MaterialDesignHeadline5TextBlock}" />
+
+				<ListView x:Name="localModelList"
+						  ItemsSource="{Binding LocalModels}"
+						  Margin="12">
+					<ListView.Resources>
+						<Style TargetType="ListViewItem">
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="ListViewItem">
+										<Border Margin="0"
+												Padding="0" />
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</ListView.Resources>
+					<ListView.ItemContainerStyle>
+						<Style TargetType="ListViewItem"
+							   BasedOn="{StaticResource MaterialDesignListBoxItem}">
+							<Setter Property="HorizontalContentAlignment"
+									Value="Stretch" />
+							<Setter Property="Padding"
+									Value="0" />
+						</Style>
+					</ListView.ItemContainerStyle>
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<uc:ListViewItemLocalModel />
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+
+				<TextBlock Text="Ollama library"
+						   Style="{StaticResource MaterialDesignHeadline5TextBlock}" />
+
+				<ListView>
+					<ListViewItem Content="Model A" />
+					<ListViewItem Content="Model B" />
+				</ListView>
+			</StackPanel>
+
+			<GridSplitter Grid.Column="0"
+						  VerticalAlignment="Stretch"
+						  HorizontalAlignment="Right"
+						  Background="#FFD8D8D8"
+						  ShowsPreview="True"
+						  Width="3"/>
+
+			<!-- Info model panel -->
+			<Grid Grid.Column="1"
+				  
+				  Visibility="{Binding SelectedItem, ElementName=localModelList, Converter={StaticResource selectedItemVisibilityConverter}}">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+
+				<TextBlock  Grid.Column="0"
+							Grid.ColumnSpan="2"
+							Grid.Row="0"
+							Text="Model Info"
+							Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+							Margin="0,0,0,12"/>
+
+				<TextBlock Grid.Column="0"
+						   Grid.Row="1"
+						   Text="Name: "
+						   VerticalAlignment="Center"
+						   Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+						   Margin="6"/>
+				<TextBlock  Grid.Column="1"
+							Grid.Row="1"
+							Text="{Binding SelectedItem.Name, ElementName=localModelList}"
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}" />
+
+				<TextBlock  Grid.Column="0"
+							Grid.Row="2"
+							Text="Family: "
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+							Margin="6"/>
+				<TextBlock  Grid.Column="1"
+							Grid.Row="2"
+							Text="{Binding SelectedItem.Details.Family, ElementName=localModelList}"
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}" />
+
+				<TextBlock  Grid.Column="0"
+							Grid.Row="3"
+							Text="Format: "
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+							Margin="6" />
+				<TextBlock  Grid.Column="1"
+							Grid.Row="3"
+							Text="{Binding SelectedItem.Details.Format, ElementName=localModelList}"
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}" />
+
+				<TextBlock  Grid.Column="0"
+							Grid.Row="4"
+							Text="Parameter size: "
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+							Margin="6"/>
+				<TextBlock  Grid.Column="1"
+							Grid.Row="4"
+							Text="{Binding SelectedItem.Details.ParameterSize, ElementName=localModelList}"
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}" />
+
+				<TextBlock  Grid.Column="0"
+							Grid.Row="5"
+							Text="Parent model: "
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+							Margin="6"/>
+				<TextBlock  Grid.Column="1"
+							Grid.Row="5"
+							Text="{Binding SelectedItem.Details.ParentModel, ElementName=localModelList}"
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}" />
+
+				<TextBlock  Grid.Column="0"
+							Grid.Row="6"
+							Text="Quantization level: "
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+							Margin="6"/>
+				<TextBlock  Grid.Column="1"
+							Grid.Row="6"
+							Text="{Binding SelectedItem.Details.QuantizationLevel, ElementName=localModelList}"
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}" />
+
+				<TextBlock  Grid.Column="0"
+							Grid.Row="7"
+							Text="Digest: "
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+							Margin="6"/>
+				<TextBlock  Grid.Column="1"
+							Grid.Row="7"
+							Text="{Binding SelectedItem.Digest, ElementName=localModelList}"
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}" />
+
+				<TextBlock  Grid.Column="0"
+							Grid.Row="8"
+							Text="Modified at: "
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+							Margin="6"/>
+				<TextBlock  Grid.Column="1"
+							Grid.Row="8"
+							Text="{Binding SelectedItem.ModifiedAt, ElementName=localModelList, StringFormat='{}{0:dd-MMM-yyyy}'}"
+							VerticalAlignment="Center"
+							Style="{StaticResource MaterialDesignBodyLargeTextBlock}" />
+
+			</Grid>
+		
+			</Grid>
+
+	</Grid>
+</UserControl>
