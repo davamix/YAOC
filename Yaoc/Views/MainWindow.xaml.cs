@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Yaoc.ViewModels;
 
 namespace Yaoc.Views;
 
@@ -8,5 +9,7 @@ namespace Yaoc.Views;
 public partial class MainWindow : Window {
     public MainWindow() {
         InitializeComponent();
+
+        this.DataContext = App.Host.Services.GetService(typeof(MainViewModel));
     }
 }

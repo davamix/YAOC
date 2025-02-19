@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using MaterialDesignThemes.Wpf;
 using OllamaSharp;
 using OllamaSharp.Models.Chat;
@@ -8,12 +9,13 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using Yaoc.Data;
+using Yaoc.Messages.Snackbar;
 using Yaoc.Models;
 using Yaoc.Services;
 
 namespace Yaoc.ViewModels;
 
-public partial class ConversationsViewModel : ObservableObject {
+public partial class ConversationsViewModel : BaseViewModel {
 
     public ObservableCollection<string> Models { get; } = [];
     public ObservableCollection<Conversation> Conversations { get; } = [];
@@ -61,12 +63,6 @@ public partial class ConversationsViewModel : ObservableObject {
     [ObservableProperty]
     private string _errorMessage = string.Empty;
 
-    [ObservableProperty]
-    private bool _showErrorMessage = false;
-
-    [ObservableProperty]
-    private SnackbarMessageQueue _errorMessageQueue;
-
     private readonly IOllamaService _ollamaService;
     private readonly IStorageProvider _storageProvider;
     private readonly IDialogService _dialogService;
@@ -81,15 +77,26 @@ public partial class ConversationsViewModel : ObservableObject {
         _storageProvider = storageProvider;
         _dialogService = dialogService;
         _botMessageStream = new StringBuilder();
-        _errorMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(5));
+        
 
         Task.WhenAll(
             Task.Run(LoadModels),
             Task.Run(LoadConversations));
     }
 
+    protected override void OnActivated() {
+        WeakReferenceMessenger.Default.Register<ConversationsViewModel, ModelDeletedMessage>(this, async (r, m) => {
+            await LoadModels();
+            
+        });
+    }
+
     private async Task LoadModels() {
-        foreach (var model in await _ollamaService.GetLocalModelNamesAsync()) {
+        Models.Clear(); 
+
+        var models = await _ollamaService.GetLocalModelNamesAsync();
+
+        foreach (var model in models) {
             Models.Add(model);
         }
     }
@@ -152,7 +159,7 @@ public partial class ConversationsViewModel : ObservableObject {
                 } catch (Exception ex) {
                     Debug.WriteLine(ex.Message);
                     StopWaitingForResponse();
-                    DisplayErrorMessage(ex);
+                    DisplayConversationErrorMessage(ex.Message);
                 }
             }).ContinueWith(_ => _storageProvider.SaveConversations(Conversations));
         }
@@ -191,11 +198,9 @@ public partial class ConversationsViewModel : ObservableObject {
                 await _storageProvider.SaveConversations(Conversations);
             }
         } catch (InvalidOperationException ex) {
-            Debug.WriteLine(ex.Message);
-            DisplayErrorMessage(ex, true);
+            NotifyException(ex);
         } catch (Exception ex) {
-            Debug.WriteLine(ex.Message);
-            DisplayErrorMessage(ex, true);
+            NotifyException(ex);
         }
     }
 
@@ -216,15 +221,9 @@ public partial class ConversationsViewModel : ObservableObject {
         RefreshProperty(nameof(IsWaitingForResponse));
     }
 
-    private void DisplayErrorMessage(string message, bool showError = false) {
-        ErrorMessageQueue.Enqueue(message, "COPY", () => Clipboard.SetData(DataFormats.Text, message));
-        ShowErrorMessage = showError;
-        RefreshProperty(nameof(ErrorMessage));
-    }
-
-    private void DisplayErrorMessage(Exception ex, bool showError = false) {
-        ErrorMessageQueue.Enqueue(ex.Message, "COPY", () => Clipboard.SetData(DataFormats.Text, ex.ToString()));
-        ShowErrorMessage = showError;
+    // Show the error message on chat
+    private void DisplayConversationErrorMessage(string message) {
+        ErrorMessage = message;
         RefreshProperty(nameof(ErrorMessage));
     }
 

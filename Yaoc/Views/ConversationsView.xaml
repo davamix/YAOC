@@ -225,19 +225,10 @@
 
 		</Grid>
 
-		<md:Snackbar Grid.Column="0"
-								 Grid.ColumnSpan="2"
-								 HorizontalAlignment="Stretch"
-								 IsActive="{Binding ShowErrorMessage}"
-								 MessageQueue="{Binding ErrorMessageQueue}" />
+		
 
 
-		<!-- Dialog host -->
-		<Grid Grid.Column="0"
-			  Grid.ColumnSpan="2">
-			<md:DialogHost Identifier="RootDialogHost">
-			</md:DialogHost>
-		</Grid>
+		
 
 	</Grid>
 </UserControl>

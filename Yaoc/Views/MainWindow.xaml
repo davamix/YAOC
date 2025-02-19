@@ -19,62 +19,74 @@
 		Height="768"
 		Width="1366">
 
-	<md:Card>
-		<TabControl md:NavigationRailAssist.ShowSelectionBackground="True"
-					SnapsToDevicePixels="True"
-					Style="{StaticResource MaterialDesignNavigationRailTabControl}"
-					TabStripPlacement="Left">
-			<!-- Conversations -->
-			<TabItem>
-				<TabItem.Header>
-					<StackPanel Width="Auto"
-								Height="Auto">
-						<md:PackIcon Kind="Folder"
-									 Width="24"
-									 Height="24"
-									 HorizontalAlignment="Center" />
-						<TextBlock Text="Chats"
-								   HorizontalAlignment="Center" />
-					</StackPanel>
-				</TabItem.Header>
+	<Grid>
+		<md:Card>
+			<TabControl md:NavigationRailAssist.ShowSelectionBackground="True"
+						SnapsToDevicePixels="True"
+						Style="{StaticResource MaterialDesignNavigationRailTabControl}"
+						TabStripPlacement="Left">
+				<!-- Conversations -->
+				<TabItem>
+					<TabItem.Header>
+						<StackPanel Width="Auto"
+									Height="Auto">
+							<md:PackIcon Kind="Folder"
+										 Width="24"
+										 Height="24"
+										 HorizontalAlignment="Center" />
+							<TextBlock Text="Chats"
+									   HorizontalAlignment="Center" />
+						</StackPanel>
+					</TabItem.Header>
 
-				<views:ConversationsView />
-			</TabItem>
+					<views:ConversationsView />
+				</TabItem>
 
-			<!-- Models -->
-			<TabItem>
-				<TabItem.Header>
-					<StackPanel Width="Auto"
-								Height="Auto">
-						<md:PackIcon Kind="Cube"
-									 Width="24"
-									 Height="24"
-									 HorizontalAlignment="Center" />
-						<TextBlock Text="Models"
-								   HorizontalAlignment="Center" />
-					</StackPanel>
-				</TabItem.Header>
+				<!-- Models -->
+				<TabItem>
+					<TabItem.Header>
+						<StackPanel Width="Auto"
+									Height="Auto">
+							<md:PackIcon Kind="Cube"
+										 Width="24"
+										 Height="24"
+										 HorizontalAlignment="Center" />
+							<TextBlock Text="Models"
+									   HorizontalAlignment="Center" />
+						</StackPanel>
+					</TabItem.Header>
 
-				<views:ModelsView />
-			</TabItem>
+					<views:ModelsView />
+				</TabItem>
 
-			<!-- Settings -->
-			<TabItem>
-				<TabItem.Header>
-					<StackPanel Width="Auto"
-								Height="Auto">
-						<md:PackIcon Kind="Cog"
-									 Width="24"
-									 Height="24"
-									 HorizontalAlignment="Center" />
-						<TextBlock Text="Settings"
-								   HorizontalAlignment="Center" />
-					</StackPanel>
-				</TabItem.Header>
+				<!-- Settings -->
+				<TabItem>
+					<TabItem.Header>
+						<StackPanel Width="Auto"
+									Height="Auto">
+							<md:PackIcon Kind="Cog"
+										 Width="24"
+										 Height="24"
+										 HorizontalAlignment="Center" />
+							<TextBlock Text="Settings"
+									   HorizontalAlignment="Center" />
+						</StackPanel>
+					</TabItem.Header>
 
-				<views:SettingsView />
-			</TabItem>
-		</TabControl>
-	</md:Card>
+					<views:SettingsView />
+				</TabItem>
+			</TabControl>
+		</md:Card>
+
+		<md:Snackbar HorizontalAlignment="Stretch"
+					 MessageQueue="{Binding NotificationMessageQueue}" />
+
+		<!-- Dialog host -->
+		<Grid>
+			<md:DialogHost Identifier="RootDialogHost">
+			</md:DialogHost>
+		</Grid>
+	</Grid>
+
 
 </Window>

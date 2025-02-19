@@ -11,6 +11,8 @@ public interface IOllamaService {
     Task<List<Model>> GetLocalModelsAsync();
     Chat CreateChat();
 
+    Task DeleteLocalModelAsync(string modelName);
+
     Task<bool> TestConnection(string ollamaServerUrl);
 }
 
@@ -60,6 +62,10 @@ internal class OllamaService : IOllamaService {
         var models = await _ollamaApiClient.ListLocalModelsAsync();
 
         return models.ToList();
+    }
+
+    public async Task DeleteLocalModelAsync(string modelName) {
+        await _ollamaApiClient.DeleteModelAsync(new DeleteModelRequest() { Model = modelName });
     }
 
     public async Task<bool> TestConnection(string ollamaServerUrl) {
