@@ -125,8 +125,7 @@
 						  Name="userComboBox"
 						  ItemsSource="{Binding Models}"
 						  HorizontalAlignment="Stretch"
-						  SelectedItem="{Binding SelectedModel}"
-						  IsEnabled="{Binding CanSelectModel}" />
+						  SelectedItem="{Binding SelectedModel}" />
 
 			</Grid>
 

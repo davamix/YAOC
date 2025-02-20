@@ -31,9 +31,6 @@ public partial class ConversationsViewModel : BaseViewModel {
         }
     }
 
-    [ObservableProperty]
-    private bool _canSelectModel;
-
     private Conversation _currentConversation;
     public Conversation CurrentConversation {
         get => _currentConversation;
@@ -124,8 +121,6 @@ public partial class ConversationsViewModel : BaseViewModel {
             foreach (var m in CurrentConversation.Messages) {
                 _currentChat.Messages.Add(m);
             }
-
-            CanSelectModel = !CurrentConversation.Messages.Any(x => x.Role == ChatRole.User);
         }
     }
 
@@ -136,7 +131,6 @@ public partial class ConversationsViewModel : BaseViewModel {
             UserMessage = string.Empty;
 
             _currentConversation.Messages.Add(new Message(ChatRole.User, message));
-            CanSelectModel = false;
 
             _currentChat.Model = SelectedModel;
 
