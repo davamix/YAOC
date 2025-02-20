@@ -6,6 +6,7 @@ using OllamaSharp.Models.Chat;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Data;
+using Yaoc.Messages;
 using Yaoc.Messages.Snackbar;
 using Yaoc.Messges;
 using Yaoc.Services;
@@ -66,5 +67,12 @@ public partial class ModelsViewModel : BaseViewModel {
             Debug.WriteLine(ex.Message);
             NotifyException(ex);
         }
+    }
+
+    [RelayCommand]
+    private async Task RefreshLocalModels() {
+        await LoadLocalModels();
+
+        Messenger.Send(new LocalModelsRefreshedMessage(LocalModels));
     }
 }

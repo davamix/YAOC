@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using Yaoc.Data;
+using Yaoc.Messages;
 using Yaoc.Messages.Snackbar;
 using Yaoc.Models;
 using Yaoc.Services;
@@ -85,16 +86,29 @@ public partial class ConversationsViewModel : BaseViewModel {
     protected override void OnActivated() {
         WeakReferenceMessenger.Default.Register<ConversationsViewModel, ModelDeletedMessage>(this, async (r, m) => {
             await LoadModels();
-            
+        });
+
+        WeakReferenceMessenger.Default.Register<ConversationsViewModel, LocalModelsRefreshedMessage>(this, async (r, m) => {
+            var currentModel = CurrentConversation?.Model;
+
+            RefreshModelsList(m.Value.Select(m => m.Name));
+
+            if(CurrentConversation != null) {
+                SelectedModel = currentModel;
+            }
         });
     }
 
     private async Task LoadModels() {
-        Models.Clear(); 
-
         var models = await _ollamaService.GetLocalModelNamesAsync();
 
-        foreach (var model in models) {
+        RefreshModelsList(models);
+    }
+
+    private void RefreshModelsList(IEnumerable<string> modelNames) {
+        Models.Clear();
+
+        foreach (var model in modelNames) {
             Models.Add(model);
         }
     }

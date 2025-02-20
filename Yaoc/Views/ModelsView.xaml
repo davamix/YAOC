@@ -36,8 +36,15 @@
 
 			<!-- Model Lists -->
 			<StackPanel Grid.Row="0">
-				<TextBlock Text="Local models"
-						   Style="{StaticResource MaterialDesignHeadline5TextBlock}" />
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="Local models"
+							   Style="{StaticResource MaterialDesignHeadline5TextBlock}" />
+					<Button Content="{md:PackIcon Kind=Refresh}"
+							Style="{DynamicResource MaterialDesignFlatButton}"
+							Margin="5,0,0,0"
+							Command="{Binding RefreshLocalModelsCommand}"/>
+				</StackPanel>
+				
 
 				<ListView x:Name="localModelList"
 						  ItemsSource="{Binding LocalModels}"
