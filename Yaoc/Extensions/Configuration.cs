@@ -9,8 +9,8 @@ namespace Yaoc.Extensions;
 public static class Configuration {
     public static IServiceCollection RegisterServices(this IServiceCollection services) {
         services.AddSingleton<IOllamaService, OllamaService>();
-        services.AddSingleton<IStorageProvider, FileSystemProvider>();
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IConversationsService, ConversationsService>();
 
         return services;
     }
@@ -36,6 +36,12 @@ public static class Configuration {
     public static IServiceCollection RegisterDialogs(this IServiceCollection services) {
         services.AddSingleton<YesNoDialog>();
 
+        return services;
+    }
+
+    public static IServiceCollection RegisterProviders(this IServiceCollection services) {
+        services.AddSingleton<IStorageProvider, FileSystemProvider>();
+        
         return services;
     }
 }

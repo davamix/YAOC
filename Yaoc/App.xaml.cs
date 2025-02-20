@@ -24,6 +24,7 @@ namespace Yaoc {
                     services.RegisterViewModels();
                     services.RegisterViews();
                     services.RegisterDialogs();
+                    services.RegisterProviders();
                 })
                 .Build();
         }

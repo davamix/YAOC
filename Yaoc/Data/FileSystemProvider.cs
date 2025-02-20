@@ -6,6 +6,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CommunityToolkit.Mvvm.Messaging;
+using System.Windows;
+using Yaoc.Messages.Snackbar;
+using System.Windows.Data;
 
 namespace Yaoc.Data;
 
@@ -33,11 +37,6 @@ public class ChatConverter : JsonConverter<Chat> {
 }
 
 public class FileSystemProvider : IStorageProvider {
-    //private readonly IOllamaService _ollamaService;
-    //public FileSystemProvider(IOllamaService ollamaService) {
-    //    _ollamaService = ollamaService;
-    //}
-
     public async Task<IEnumerable<Conversation>> LoadConversations() {
         var data = Enumerable.Empty<Conversation>();
 
@@ -53,6 +52,7 @@ public class FileSystemProvider : IStorageProvider {
                 data = await JsonSerializer.DeserializeAsync<IEnumerable<Conversation>>(stream);
             } catch (Exception e) {
                 Debug.WriteLine(e.Message);
+                throw;
             }
         }
 
@@ -89,7 +89,5 @@ public class FileSystemProvider : IStorageProvider {
                             WriteIndented = true
                         });
         }
-
-
     }
 }

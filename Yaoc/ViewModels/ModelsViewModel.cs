@@ -2,8 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using OllamaSharp.Models;
+using OllamaSharp.Models.Chat;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Windows.Data;
 using Yaoc.Messages.Snackbar;
 using Yaoc.Messges;
 using Yaoc.Services;
@@ -13,12 +15,17 @@ namespace Yaoc.ViewModels;
 public partial class ModelsViewModel : BaseViewModel {
     private readonly IOllamaService _ollamaService;
     private readonly IDialogService _dialogService;
+    private readonly IConversationsService _conversationsService;
 
     public ObservableCollection<Model> LocalModels { get; private set; }
 
-    public ModelsViewModel(IOllamaService ollamaService, IDialogService dialogService) {
+    public ModelsViewModel(
+        IOllamaService ollamaService, 
+        IDialogService dialogService,
+        IConversationsService conversationsService) {
         _ollamaService = ollamaService;
         _dialogService = dialogService;
+        _conversationsService = conversationsService;
         LocalModels = new ObservableCollection<Model>();
 
         Task.WhenAll(
@@ -36,9 +43,18 @@ public partial class ModelsViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task DeleteLocalModel(Model model) {
-        var result = await _dialogService.ShowYesNoDialog("Delete model", $"Do you want to delete {model.Name} model?");
+        var conversations = await _conversationsService.GetConversationsWithModel(model);
+        var dialogMessage = string.Empty;
 
-        if (!result) return;
+        if(conversations.Any()) {
+            dialogMessage = $"Model {model.Name} is in use in conversations: {string.Join(", ", conversations)}.\n\nDo you want to delete the model {model.Name} anyways?";
+        } else {
+            dialogMessage = $"Do you want to delete {model.Name} model?";
+        }
+
+        var dialogResult = await _dialogService.ShowYesNoDialog("Delete model", dialogMessage);
+
+        if (!dialogResult) return;
 
         try {
             await _ollamaService.DeleteLocalModelAsync(model.Name);

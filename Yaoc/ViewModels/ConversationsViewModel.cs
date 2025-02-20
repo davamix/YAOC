@@ -64,17 +64,18 @@ public partial class ConversationsViewModel : BaseViewModel {
     private string _errorMessage = string.Empty;
 
     private readonly IOllamaService _ollamaService;
-    private readonly IStorageProvider _storageProvider;
+    private readonly IConversationsService _conversationsService;
     private readonly IDialogService _dialogService;
+
     private Chat _currentChat;
 
     public ConversationsViewModel(
         IOllamaService ollamaService,
-        IStorageProvider storageProvider,
+        IConversationsService conversationsService,
         IDialogService dialogService) {
 
         _ollamaService = ollamaService;
-        _storageProvider = storageProvider;
+        _conversationsService = conversationsService;
         _dialogService = dialogService;
         _botMessageStream = new StringBuilder();
         
@@ -102,7 +103,7 @@ public partial class ConversationsViewModel : BaseViewModel {
     }
 
     private async Task LoadConversations() {
-        var conversations = await _storageProvider.LoadConversations();
+        var conversations = await _conversationsService.LoadConversations();
         foreach (var conversation in conversations) {
             Conversations.Add(conversation);
         }
@@ -161,7 +162,7 @@ public partial class ConversationsViewModel : BaseViewModel {
                     StopWaitingForResponse();
                     DisplayConversationErrorMessage(ex.Message);
                 }
-            }).ContinueWith(_ => _storageProvider.SaveConversations(Conversations));
+            }).ContinueWith(_ => _conversationsService.SaveConversations(Conversations));
         }
     }
 
@@ -180,7 +181,7 @@ public partial class ConversationsViewModel : BaseViewModel {
 
         Conversations.Add(_currentConversation);
 
-        await _storageProvider.SaveConversations(Conversations);
+        await _conversationsService.SaveConversations(Conversations);
     }
 
     [RelayCommand]
@@ -195,12 +196,12 @@ public partial class ConversationsViewModel : BaseViewModel {
             if (result) {
                 Conversations.Remove(conversation);
 
-                await _storageProvider.SaveConversations(Conversations);
+                await _conversationsService.SaveConversations(Conversations);
             }
         } catch (InvalidOperationException ex) {
-            NotifyException(ex);
+            base.NotifyException(ex);
         } catch (Exception ex) {
-            NotifyException(ex);
+            base.NotifyException(ex);
         }
     }
 
@@ -208,7 +209,7 @@ public partial class ConversationsViewModel : BaseViewModel {
     private async Task ChangeConversationName(string conversationName) {
         CurrentConversation.Name = conversationName;
 
-        await _storageProvider.SaveConversations(Conversations);
+        await _conversationsService.SaveConversations(Conversations);
     }
 
     private void StartWaitingForResponse() {
