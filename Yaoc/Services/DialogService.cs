@@ -2,11 +2,15 @@
 using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using System.Windows.Data;
+using Microsoft.Win32;
+using System.Text;
 
 namespace Yaoc.Services;
 
 public interface IDialogService {
     Task<bool> ShowYesNoDialog(string title, string message);
+    string ShowSelectionFileDialog();
 }
 
 public class DialogService : IDialogService {
@@ -30,6 +34,22 @@ public class DialogService : IDialogService {
             false => false,
             _ => false
         };
+    }
+
+    public string ShowSelectionFileDialog() {
+        var ofd = new OpenFileDialog();
+        var sbFilters = new StringBuilder();
+        sbFilters.Append("Images Files (*.bmp;*.gif;*.jpg;.jpeg;*.png;*.tif;*.tiff)|*.bmp;*.gif;*.jpg;.jpeg;*.png;*.tif;*.tiff");
+        sbFilters.Append("|Text Files (*.txt;*.csv;*.log;*.md;*.pdf;*.xml;*.json)|*.txt;*.csv;*.log;*.md;*.pdf;*.xml;*.json");
+
+        var fiter = sbFilters.ToString();
+
+        ofd.Filter = sbFilters.ToString();
+        if (ofd.ShowDialog() == true) {
+            return ofd.FileName;
+        }
+
+        return string.Empty;
     }
 
     private static void ThrowIfNull(object? dialog, Type dialogType) {

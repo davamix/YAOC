@@ -1,14 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using MaterialDesignThemes.Wpf;
 using OllamaSharp;
 using OllamaSharp.Models.Chat;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
-using Yaoc.Data;
 using Yaoc.Messages;
 using Yaoc.Messages.Snackbar;
 using Yaoc.Models;
@@ -20,6 +18,7 @@ public partial class ConversationsViewModel : BaseViewModel {
 
     public ObservableCollection<string> Models { get; } = [];
     public ObservableCollection<Conversation> Conversations { get; } = [];
+    public ObservableCollection<string> AttachedFiles { get; set; } = [];
 
     //[ObservableProperty]
     private string _selectedModel = string.Empty;
@@ -76,7 +75,7 @@ public partial class ConversationsViewModel : BaseViewModel {
         _conversationsService = conversationsService;
         _dialogService = dialogService;
         _botMessageStream = new StringBuilder();
-        
+
 
         Task.WhenAll(
             Task.Run(LoadModels),
@@ -93,7 +92,7 @@ public partial class ConversationsViewModel : BaseViewModel {
 
             RefreshModelsList(m.Value.Select(m => m.Name));
 
-            if(CurrentConversation != null) {
+            if (CurrentConversation != null) {
                 SelectedModel = currentModel;
             }
         });
@@ -128,14 +127,20 @@ public partial class ConversationsViewModel : BaseViewModel {
     private void InitializeConversation() {
         _currentChat = _ollamaService.CreateChat();
 
-        if (CurrentConversation != null) {
-            _currentChat.Model = _currentConversation.Model;
-            SelectedModel = _currentConversation.Model;
+        if (CurrentConversation == null) return;
+        
+        _currentChat.Model = _currentConversation.Model;
 
-            foreach (var m in CurrentConversation.Messages) {
-                _currentChat.Messages.Add(m);
-            }
+        if (Models.Contains(_currentConversation.Model)) {
+            SelectedModel = _currentConversation.Model;
+        } else {
+            SelectedModel = null;
         }
+
+        foreach (var m in CurrentConversation.Messages) {
+            _currentChat.Messages.Add(m);
+        }
+
     }
 
     [RelayCommand]
@@ -218,6 +223,20 @@ public partial class ConversationsViewModel : BaseViewModel {
         CurrentConversation.Name = conversationName;
 
         await _conversationsService.SaveConversations(Conversations);
+    }
+
+    [RelayCommand]
+    private void RemoveAttachedFile(string filePath) {
+        AttachedFiles.Remove(filePath);
+    }
+
+    [RelayCommand]
+    private void OpenAttachFileDialog() {
+        var result = _dialogService.ShowSelectionFileDialog();
+
+        if(result != string.Empty) {
+            AttachedFiles.Add(result);
+        }
     }
 
     private void StartWaitingForResponse() {

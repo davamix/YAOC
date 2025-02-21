@@ -9,13 +9,14 @@
 			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 xmlns:customBehaviours="clr-namespace:Yaoc.Behaviours"
 			 xmlns:uc="clr-namespace:Yaoc.Controls"
-			 mc:Ignorable="d">
+			 mc:Ignorable="d"
+			 x:Name="conversationsView">
 
 	<UserControl.Resources>
 		<converters:StringToVisibilityConverter x:Key="stringToVisibilityConverter" />
 		<converters:ConversationToVisibilityConverter x:Key="conversationToVisibilityConverter" />
 		<converters:RoleToColorConverter x:Key="roleToColorConverter" />
-		<converters:EmptyStringToBooleanConverter x:Key="emptyStringToBooleanConverter" />
+		
 		<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
 	</UserControl.Resources>
 
@@ -170,14 +171,15 @@
 
 			<!-- Input Section -->
 			<Grid Grid.Row="3">
-				<Grid.ColumnDefinitions>
+				<!--<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
+				</Grid.ColumnDefinitions>-->
 
 				<!-- Change background color to inverted surface -->
-				<TextBox Grid.Column="0"
+				<uc:TextBoxInputPrompt />
+				<!--<TextBox Grid.Column="0"
 						 Name="inputTextBox"
 						 Margin="5"
 						 MaxHeight="100"
@@ -219,7 +221,7 @@
 						Content="{md:PackIcon Kind=Send}"
 						Style="{StaticResource MaterialDesignFloatingActionButton}"
 						IsEnabled="{Binding SelectedModel,Converter={StaticResource emptyStringToBooleanConverter}}"
-						Command="{Binding SendMessageCommand}" />
+						Command="{Binding SendMessageCommand}" />-->
 			</Grid>
 
 		</Grid>
