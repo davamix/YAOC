@@ -1,17 +1,12 @@
-﻿using Yaoc.Models;
-using Yaoc.Services;
+﻿using Yaoc.Core.Models;
+using Yaoc.Core.Services;
 using OllamaSharp;
 using System.Collections;
 using System.Diagnostics;
-using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using CommunityToolkit.Mvvm.Messaging;
-using System.Windows;
-using Yaoc.Messages.Snackbar;
-using System.Windows.Data;
 
-namespace Yaoc.Data;
+namespace Yaoc.Core.Data;
 
 public class ChatConverter : JsonConverter<Chat> {
     private readonly IOllamaService _ollamaService;

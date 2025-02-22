@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
-using Yaoc.Services;
+using Yaoc.Core.Services;
 
 namespace Yaoc.ViewModels;
 

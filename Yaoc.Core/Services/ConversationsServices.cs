@@ -1,13 +1,8 @@
 ﻿using OllamaSharp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Yaoc.Data;
-using Yaoc.Models;
+using Yaoc.Core.Data;
+using Yaoc.Core.Models;
 
-namespace Yaoc.Services;
+namespace Yaoc.Core.Services;
 
 public interface IConversationsService {
     Task<IEnumerable<Conversation>> LoadConversations();

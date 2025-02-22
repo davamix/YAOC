@@ -9,8 +9,9 @@ using System.Text;
 using System.Windows;
 using Yaoc.Messages;
 using Yaoc.Messages.Snackbar;
-using Yaoc.Models;
-using Yaoc.Services;
+using Yaoc.Core.Models;
+using Yaoc.Core.Services;
+using Yaoc.Dialogs;
 
 namespace Yaoc.ViewModels;
 
@@ -62,14 +63,14 @@ public partial class ConversationsViewModel : BaseViewModel {
 
     private readonly IOllamaService _ollamaService;
     private readonly IConversationsService _conversationsService;
-    private readonly IDialogService _dialogService;
+    private readonly IDialogManager _dialogService;
 
     private Chat _currentChat;
 
     public ConversationsViewModel(
         IOllamaService ollamaService,
         IConversationsService conversationsService,
-        IDialogService dialogService) {
+        IDialogManager dialogService) {
 
         _ollamaService = ollamaService;
         _conversationsService = conversationsService;

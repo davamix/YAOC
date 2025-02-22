@@ -1,5 +1,5 @@
-﻿using Yaoc.Data;
-using Yaoc.Services;
+﻿using Yaoc.Core.Data;
+using Yaoc.Core.Services;
 using Yaoc.ViewModels;
 using Yaoc.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +9,7 @@ namespace Yaoc.Extensions;
 public static class Configuration {
     public static IServiceCollection RegisterServices(this IServiceCollection services) {
         services.AddSingleton<IOllamaService, OllamaService>();
-        services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IDialogManager, DialogManager>();
         services.AddSingleton<IConversationsService, ConversationsService>();
 
         return services;

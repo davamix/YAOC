@@ -6,7 +6,6 @@
 			  xmlns:local="clr-namespace:Yaoc.Controls"
 			  xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
 			  xmlns:converters="clr-namespace:Yaoc.Converters"
-			  xmlns:models="clr-namespace:Yaoc.Models"
 			  mc:Ignorable="d"
 			  HorizontalContentAlignment="Stretch"
 			  Style="{DynamicResource MaterialDesignListBoxItem}"

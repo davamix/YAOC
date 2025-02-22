@@ -1,11 +1,6 @@
-﻿using Yaoc.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Yaoc.Core.Models;
 
-namespace Yaoc.Data;
+namespace Yaoc.Core.Data;
 
 public interface IStorageProvider
 {

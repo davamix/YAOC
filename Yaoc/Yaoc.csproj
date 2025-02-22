@@ -10,6 +10,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\**" />
+    <Compile Remove="Models\**" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Data\**" />
+    <None Remove="Models\**" />
+    <None Remove="Services\**" />
+    <Page Remove="Data\**" />
+    <Page Remove="Models\**" />
+    <Page Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Dialogs\SettingsDialog.xaml.cs" />
     <Compile Remove="Dialogs\SettingsDialogViewModel.cs" />
   </ItemGroup>
@@ -34,7 +49,11 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.1" />
-    <PackageReference Include="OllamaSharp" Version="5.0.5" />
+    <PackageReference Include="OllamaSharp" Version="5.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Yaoc.Core\Yaoc.Core.csproj" />
   </ItemGroup>
   
   

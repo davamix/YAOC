@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 
-namespace Yaoc.Messges
+namespace Yaoc.Messges;
+
+public class NotificationMessage:ValueChangedMessage<string>
 {
-    public class NotificationMessage:ValueChangedMessage<string>
-    {
-        public NotificationMessage(string message):base(message) {
-            
-        }
+    public NotificationMessage(string message):base(message) {
+        
     }
 }

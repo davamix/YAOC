@@ -1,22 +1,20 @@
-﻿using Yaoc.Dialogs;
-using MaterialDesignThemes.Wpf;
+﻿using MaterialDesignThemes.Wpf;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using System.Windows.Data;
 using Microsoft.Win32;
 using System.Text;
 
-namespace Yaoc.Services;
+namespace Yaoc.Dialogs;
 
-public interface IDialogService {
+public interface IDialogManager {
     Task<bool> ShowYesNoDialog(string title, string message);
     string ShowSelectionFileDialog();
 }
 
-public class DialogService : IDialogService {
+public class DialogManager : IDialogManager {
     private readonly IHost _host;
 
-    public DialogService(IHost host) {
+    public DialogManager(IHost host) {
         _host = host;
     }
 

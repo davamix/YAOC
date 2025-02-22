@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using System.Windows;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
-using System.IO;
 
 namespace Yaoc {
     /// <summary>

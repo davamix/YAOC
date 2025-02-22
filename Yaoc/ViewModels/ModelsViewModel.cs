@@ -1,28 +1,25 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using OllamaSharp.Models;
-using OllamaSharp.Models.Chat;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Windows.Data;
 using Yaoc.Messages;
 using Yaoc.Messages.Snackbar;
-using Yaoc.Messges;
-using Yaoc.Services;
+using Yaoc.Core.Services;
+using Yaoc.Dialogs;
 
 namespace Yaoc.ViewModels;
 
 public partial class ModelsViewModel : BaseViewModel {
     private readonly IOllamaService _ollamaService;
-    private readonly IDialogService _dialogService;
+    private readonly IDialogManager _dialogService;
     private readonly IConversationsService _conversationsService;
 
     public ObservableCollection<Model> LocalModels { get; private set; }
 
     public ModelsViewModel(
-        IOllamaService ollamaService, 
-        IDialogService dialogService,
+        IOllamaService ollamaService,
+        IDialogManager dialogService,
         IConversationsService conversationsService) {
         _ollamaService = ollamaService;
         _dialogService = dialogService;

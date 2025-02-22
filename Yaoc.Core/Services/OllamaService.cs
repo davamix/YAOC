@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using OllamaSharp;
 using OllamaSharp.Models;
-using System.Net.Http;
 
-namespace Yaoc.Services;
+namespace Yaoc.Core.Services;
 
 public interface IOllamaService {
     IAsyncEnumerable<string> SendMessage(Chat chat, string message);
@@ -16,7 +15,7 @@ public interface IOllamaService {
     Task<bool> TestConnection(string ollamaServerUrl);
 }
 
-internal class OllamaService : IOllamaService {
+public class OllamaService : IOllamaService {
     private IOllamaApiClient _ollamaApiClient;
     private readonly IConfiguration _configuration;
 
