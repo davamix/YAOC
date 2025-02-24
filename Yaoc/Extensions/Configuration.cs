@@ -40,8 +40,9 @@ public static class Configuration {
     }
 
     public static IServiceCollection RegisterProviders(this IServiceCollection services) {
-        services.AddSingleton<IStorageProvider, FileSystemProvider>();
-        
+        //services.AddSingleton<IStorageProvider, FileSystemProvider>();
+        services.AddSingleton<IStorageProvider, SqliteProvider>();
+
         return services;
     }
 }

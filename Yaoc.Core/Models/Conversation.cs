@@ -1,21 +1,14 @@
-﻿using OllamaSharp.Models.Chat;
-using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
+﻿using System.Collections.ObjectModel;
 
 namespace Yaoc.Core.Models;
 public class Conversation {
     public string Id { get; set; }
-    public string Name { get; set; }
-    public string Model { get; set; }
-    public ObservableCollection<Message> Messages { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Model { get; set; } = string.Empty;
+    public ObservableCollection<ChatMessage> Messages { get; set; }
     public DateTime CreatedAt { get; set; }
 
-    public Conversation() : this(Guid.NewGuid().ToString()) { }
-
-    [JsonConstructor]
-    public Conversation(string id) {
-        Messages = new ObservableCollection<Message>();
-        Id = id;
-
+    public Conversation() {
+        Messages = new ObservableCollection<ChatMessage>();
     }
 }

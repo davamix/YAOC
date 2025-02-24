@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Yaoc.Core.Models;
 
 namespace Yaoc.Controls;
 /// <summary>
@@ -25,12 +26,12 @@ public partial class ListViewItemMessage : ListViewItem {
         var control = sender as ListViewItemMessage;
 
         if (control != null) {
-            var context = control.DataContext as Message;
+            var context = control.DataContext as ChatMessage;
 
             if (context != null) {
                 var lvimTemplate = CreateListViewItemMessageTemplate();
-                var messageParts = ExtractMessageParts(context.Content);
-                var messageBlock = CreateMessageBlock(messageParts, context.Role);
+                var messageParts = ExtractMessageParts(context.OllamaMessage.Content);
+                var messageBlock = CreateMessageBlock(messageParts, context.OllamaMessage.Role);
 
                 this.Template = lvimTemplate;
                 this.Content = messageBlock;

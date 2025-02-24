@@ -37,7 +37,7 @@ public partial class ConversationsViewModel : BaseViewModel {
         get => _currentConversation;
         set {
             _currentConversation = value;
-            InitializeConversation();
+            InitializeSelectedConversation();
             OnPropertyChanged();
         }
     }
@@ -78,9 +78,11 @@ public partial class ConversationsViewModel : BaseViewModel {
         _botMessageStream = new StringBuilder();
 
 
-        Task.WhenAll(
-            Task.Run(LoadModels),
-            Task.Run(LoadConversations));
+        //Task.WhenAll(
+        //    Task.Run(LoadModels),
+        //    Task.Run(LoadConversations));
+        Task.Run(LoadModels).Wait();
+        Task.Run(LoadConversations).Wait();
     }
 
     protected override void OnActivated() {
@@ -121,81 +123,103 @@ public partial class ConversationsViewModel : BaseViewModel {
     }
 
     private void SetSelectedModel() {
-        _currentConversation.Model = SelectedModel;
+        CurrentConversation.Model = SelectedModel;
         _currentChat.Model = SelectedModel;
+
+        Task.Run(async () => await _conversationsService.SaveConversation(CurrentConversation));
     }
 
-    private void InitializeConversation() {
+    private async void InitializeSelectedConversation() {
+        if (CurrentConversation == null) return;
+
         _currentChat = _ollamaService.CreateChat();
 
-        if (CurrentConversation == null) return;
-        
-        _currentChat.Model = _currentConversation.Model;
-
-        if (Models.Contains(_currentConversation.Model)) {
-            SelectedModel = _currentConversation.Model;
+        if (Models.Contains(CurrentConversation.Model)) {
+            SelectedModel = CurrentConversation.Model;
+            _currentChat.Model = CurrentConversation.Model;
         } else {
+            // Because the model was deleted.
             SelectedModel = null;
         }
 
-        foreach (var m in CurrentConversation.Messages) {
-            _currentChat.Messages.Add(m);
-        }
+        var messages = await _conversationsService.LoadMessages(CurrentConversation.Id);
+        CurrentConversation.Messages = new ObservableCollection<ChatMessage>(messages);
 
+        foreach (var m in CurrentConversation.Messages) {
+            _currentChat.Messages.Add(m.OllamaMessage);
+        }
     }
 
     [RelayCommand]
-    private void SendMessage() {
-        if (!string.IsNullOrEmpty(UserMessage)) {
-            var message = UserMessage;
-            UserMessage = string.Empty;
+    private async Task SendMessage() {
+        if (string.IsNullOrEmpty(UserMessage)) return;
 
-            _currentConversation.Messages.Add(new Message(ChatRole.User, message));
+        var message = UserMessage;
+        UserMessage = string.Empty;
 
-            _currentChat.Model = SelectedModel;
+        var userChatMessage = new ChatMessage() {
+            ConversationId = CurrentConversation.Id,
+            OllamaMessage = new Message(ChatRole.User, message)
+        };
 
-            Application.Current.Dispatcher.Invoke(async () => {
-                StartWaitingForResponse();
+        var savedUserMessage = await _conversationsService.SaveMessage(userChatMessage, CurrentConversation.Id);
 
-                try {
-                    await foreach (var response in _ollamaService.SendMessage(_currentChat, message)) {
-                        if (IsWaitingForResponse) {
-                            StopWaitingForResponse();
-                        }
+        CurrentConversation.Messages.Add(savedUserMessage);
 
-                        await Task.Delay(1); // Needed to prevent UI from freezing. Task.Yield() doesn't work.
-                        BotMessage = response;
+        _currentChat.Model = SelectedModel;
+
+        _ = Application.Current.Dispatcher.Invoke(async () => {
+            StartWaitingForResponse();
+
+            try {
+                await foreach (var response in _ollamaService.SendMessage(_currentChat, message)) {
+                    if (IsWaitingForResponse) {
+                        StopWaitingForResponse();
                     }
 
-                    _currentConversation.Messages.Add(_currentChat.Messages.Last());
-                    _botMessageStream.Clear();
-                    RefreshProperty(nameof(BotMessage));
-
-                } catch (Exception ex) {
-                    Debug.WriteLine(ex.Message);
-                    StopWaitingForResponse();
-                    DisplayConversationErrorMessage(ex.Message);
+                    await Task.Delay(1); // Needed to prevent UI from freezing. Task.Yield() doesn't work.
+                    BotMessage = response;
                 }
-            }).ContinueWith(_ => _conversationsService.SaveConversations(Conversations));
-        }
+
+                var botMessage = new ChatMessage() {
+                    ConversationId = CurrentConversation.Id,
+                    OllamaMessage = _currentChat.Messages.Last()
+                };
+
+                var savedBotMessage = await _conversationsService.SaveMessage(botMessage, CurrentConversation.Id);
+
+                CurrentConversation.Messages.Add(savedBotMessage);
+                _botMessageStream.Clear();
+                RefreshProperty(nameof(BotMessage));
+
+            } catch (Exception ex) {
+                Debug.WriteLine(ex.Message);
+                StopWaitingForResponse();
+                DisplayConversationErrorMessage(ex.Message);
+            }
+        });
     }
 
     [RelayCommand]
     private async Task CreateConversation() {
-        _currentConversation = new Conversation() {
-            Name = DateTime.Now.ToShortDateString(),
-            CreatedAt = DateTime.Now
+        var newConversation = await _conversationsService.SaveConversation(new() {
+            Name = DateTime.Now.ToShortDateString()
+        });
+
+        var initialMessage = new ChatMessage() {
+            ConversationId = newConversation.Id,
+            OllamaMessage = new Message(ChatRole.System, "You are a helpful AI assistant")
         };
 
+        await _conversationsService.SaveMessage(initialMessage, newConversation.Id);
+
+        Conversations.Add(newConversation);
+
+        _currentConversation = newConversation;
+
+        // Ollama chat object initialization
         _currentChat = _ollamaService.CreateChat();
-        var initialMessage = new Message(ChatRole.System, "You are a helpful AI assistant");
-
-        _currentChat.Messages.Add(initialMessage);
-        _currentConversation.Messages.Add(initialMessage);
-
-        Conversations.Add(_currentConversation);
-
-        await _conversationsService.SaveConversations(Conversations);
+        _currentChat.Messages.Add(initialMessage.OllamaMessage);
     }
 
     [RelayCommand]
@@ -210,7 +234,7 @@ public partial class ConversationsViewModel : BaseViewModel {
             if (result) {
                 Conversations.Remove(conversation);
 
-                await _conversationsService.SaveConversations(Conversations);
+                await _conversationsService.DeleteCoversation(conversation.Id);
             }
         } catch (InvalidOperationException ex) {
             base.NotifyException(ex);
@@ -223,7 +247,7 @@ public partial class ConversationsViewModel : BaseViewModel {
     private async Task ChangeConversationName(string conversationName) {
         CurrentConversation.Name = conversationName;
 
-        await _conversationsService.SaveConversations(Conversations);
+        await _conversationsService.SaveConversation(CurrentConversation);
     }
 
     [RelayCommand]
@@ -235,7 +259,7 @@ public partial class ConversationsViewModel : BaseViewModel {
     private void OpenAttachFileDialog() {
         var result = _dialogService.ShowSelectionFileDialog();
 
-        if(result != string.Empty) {
+        if (result != string.Empty) {
             AttachedFiles.Add(result);
         }
     }
