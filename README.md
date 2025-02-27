@@ -14,4 +14,7 @@ This is a desktop application written in C# and WPF to play with your local mode
 * Download the models via Ollama commands
 	* ollama pull your-model
 
-
+## Setup
+* <b>Yaoc</b> is the main project. This will create a <i>Plugins</i> folder on the output directory via post-build event.
+* <b>Yaoc.Plugins.PlainText</b> contains the plugin to extract content from <i>.txt</i> files.
+	* Build or Publish this project and copy the output <i>.dll</i> on <b>Yaoc</b>'s <i>Plugins</i> folder.
