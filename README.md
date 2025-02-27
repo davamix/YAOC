@@ -1,7 +1,7 @@
 # YAOC
 Yet Another Ollama Client. 
 
-This a desktop application written in C# and WPF to play with your local models.
+This is a desktop application written in C# and WPF to play with your local models.
 
 ## Features
 * Attach files to the conversation
