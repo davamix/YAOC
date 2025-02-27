@@ -12,6 +12,9 @@ using Yaoc.Messages.Snackbar;
 using Yaoc.Core.Models;
 using Yaoc.Core.Services;
 using Yaoc.Dialogs;
+using Yaoc.Core.Plugins;
+using System.IO;
+using System.Windows.Data;
 
 namespace Yaoc.ViewModels;
 
@@ -19,7 +22,7 @@ public partial class ConversationsViewModel : BaseViewModel {
 
     public ObservableCollection<string> Models { get; } = [];
     public ObservableCollection<Conversation> Conversations { get; } = [];
-    public ObservableCollection<string> AttachedFiles { get; set; } = [];
+    public ObservableCollection<MessageResource> AttachedResources { get; set; } = [];
 
     //[ObservableProperty]
     private string _selectedModel = string.Empty;
@@ -64,17 +67,19 @@ public partial class ConversationsViewModel : BaseViewModel {
     private readonly IOllamaService _ollamaService;
     private readonly IConversationsService _conversationsService;
     private readonly IDialogManager _dialogService;
-
+    //private readonly IPluginsLoader _pluginsLoader;
     private Chat _currentChat;
 
     public ConversationsViewModel(
         IOllamaService ollamaService,
         IConversationsService conversationsService,
-        IDialogManager dialogService) {
+        IDialogManager dialogService
+        ) {
 
         _ollamaService = ollamaService;
         _conversationsService = conversationsService;
         _dialogService = dialogService;
+        //_pluginsLoader = pluginsLoader;
         _botMessageStream = new StringBuilder();
 
 
@@ -157,12 +162,13 @@ public partial class ConversationsViewModel : BaseViewModel {
         var message = UserMessage;
         UserMessage = string.Empty;
 
-        var userChatMessage = new ChatMessage() {
-            ConversationId = CurrentConversation.Id,
-            OllamaMessage = new Message(ChatRole.User, message)
-        };
+        var userChatMessage = AttachedResources.Any() ?
+            await CreateUserChatMessageWithFiles(message) :
+            CreateUserChatMessage(message);
 
         var savedUserMessage = await _conversationsService.SaveMessage(userChatMessage, CurrentConversation.Id);
+
+        AttachedResources.Clear();
 
         CurrentConversation.Messages.Add(savedUserMessage);
 
@@ -172,25 +178,8 @@ public partial class ConversationsViewModel : BaseViewModel {
             StartWaitingForResponse();
 
             try {
-                await foreach (var response in _ollamaService.SendMessage(_currentChat, message)) {
-                    if (IsWaitingForResponse) {
-                        StopWaitingForResponse();
-                    }
+                await ProcessAssistantResponse(userChatMessage.OllamaMessage.Content);
 
-                    await Task.Delay(1); // Needed to prevent UI from freezing. Task.Yield() doesn't work.
-                    BotMessage = response;
-                }
-
-                var botMessage = new ChatMessage() {
-                    ConversationId = CurrentConversation.Id,
-                    OllamaMessage = _currentChat.Messages.Last()
-                };
-
-                var savedBotMessage = await _conversationsService.SaveMessage(botMessage, CurrentConversation.Id);
-
-                CurrentConversation.Messages.Add(savedBotMessage);
-                _botMessageStream.Clear();
-                RefreshProperty(nameof(BotMessage));
 
             } catch (Exception ex) {
                 Debug.WriteLine(ex.Message);
@@ -206,9 +195,14 @@ public partial class ConversationsViewModel : BaseViewModel {
             Name = DateTime.Now.ToShortDateString()
         });
 
+        var systemPrompt = """
+            - You are a helpful AI assistant. 
+            - Content files will be attached to the conversation in this format: # FILE file_name {content file} # EOF
+            """;
         var initialMessage = new ChatMessage() {
             ConversationId = newConversation.Id,
-            OllamaMessage = new Message(ChatRole.System, "You are a helpful AI assistant")
+            Message = systemPrompt,
+            OllamaMessage = new Message(ChatRole.System, systemPrompt)
         };
 
         await _conversationsService.SaveMessage(initialMessage, newConversation.Id);
@@ -229,6 +223,7 @@ public partial class ConversationsViewModel : BaseViewModel {
         var message = $"Are you sure you want to delete conversation '{conversation.Name}'?";
 
         try {
+
             var result = await _dialogService.ShowYesNoDialog("Delete conversation", message);
 
             if (result) {
@@ -251,17 +246,84 @@ public partial class ConversationsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    private void RemoveAttachedFile(string filePath) {
-        AttachedFiles.Remove(filePath);
+    private void RemoveAttachedFile(MessageResource resource) {
+        AttachedResources.Remove(resource);
     }
 
     [RelayCommand]
     private void OpenAttachFileDialog() {
-        var result = _dialogService.ShowSelectionFileDialog();
+        var extensionAvailable = string.Join(";", PluginsLoader.GetFileParserPlugins().Values.Select(x => x.GetFileFilters()));
+        var result = _dialogService.ShowSelectionFileDialog(extensionAvailable);
 
         if (result != string.Empty) {
-            AttachedFiles.Add(result);
+            AttachedResources.Add(
+                new MessageResource() {
+                    Path = result,
+                    Name = Path.GetFileName(result)
+                });
         }
+    }
+
+    [RelayCommand]
+    private void AttachedResourceNotAllowed(string message) {
+        var errorMessage = new AttachResourceNotAllowedMessage(message, SnackbarActions.NoneAction());
+
+        base.NotifyErrorMessage(errorMessage);
+    }
+
+    private async Task ProcessAssistantResponse(string message) {
+        await foreach (var response in _ollamaService.SendMessage(_currentChat, message)) {
+            if (IsWaitingForResponse) {
+                StopWaitingForResponse();
+            }
+
+            await Task.Delay(1); // Needed to prevent UI from freezing. Task.Yield() doesn't work.
+            BotMessage = response;
+        }
+
+        ChatMessage assistantMessage = CreateAssistantChatMessage();
+
+        var savedAssistantMessage = await _conversationsService.SaveMessage(assistantMessage, CurrentConversation.Id);
+
+        CurrentConversation.Messages.Add(savedAssistantMessage);
+        _botMessageStream.Clear();
+        RefreshProperty(nameof(BotMessage));
+    }
+
+    private ChatMessage CreateUserChatMessage(string message) {
+        return new ChatMessage() {
+            ConversationId = CurrentConversation.Id,
+            Message = message,
+            OllamaMessage = new Message(ChatRole.User, message)
+        };
+    }
+
+    private async Task<ChatMessage> CreateUserChatMessageWithFiles(string message) {
+        var parsedTexts = new List<string>();
+        parsedTexts.Add(message);
+
+        foreach (var resource in AttachedResources) {
+            var parser = PluginsLoader.GetFileParserPlugins().Values.FirstOrDefault(p => p.Extensions.Contains(Path.GetExtension(resource.Path)));
+            if (parser != null) {
+                var parsedText = await parser.Parse(resource.Path);
+                parsedTexts.Add(parsedText);
+            }
+        }
+
+        return new ChatMessage() {
+            ConversationId = CurrentConversation.Id,
+            Message = message,
+            AttachedResources = AttachedResources.ToList(),
+            OllamaMessage = new Message(ChatRole.User, string.Join("\n", parsedTexts))
+        };
+    }
+
+    private ChatMessage CreateAssistantChatMessage() {
+        return new ChatMessage() {
+            ConversationId = CurrentConversation.Id,
+            Message = _currentChat.Messages.Last().Content,
+            OllamaMessage = _currentChat.Messages.Last()
+        };
     }
 
     private void StartWaitingForResponse() {

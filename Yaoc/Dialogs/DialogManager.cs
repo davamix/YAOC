@@ -9,6 +9,7 @@ namespace Yaoc.Dialogs;
 public interface IDialogManager {
     Task<bool> ShowYesNoDialog(string title, string message);
     string ShowSelectionFileDialog();
+    string ShowSelectionFileDialog(string extensionFilter);
 }
 
 public class DialogManager : IDialogManager {
@@ -35,14 +36,17 @@ public class DialogManager : IDialogManager {
     }
 
     public string ShowSelectionFileDialog() {
-        var ofd = new OpenFileDialog();
         var sbFilters = new StringBuilder();
         sbFilters.Append("Images Files (*.bmp;*.gif;*.jpg;.jpeg;*.png;*.tif;*.tiff)|*.bmp;*.gif;*.jpg;.jpeg;*.png;*.tif;*.tiff");
         sbFilters.Append("|Text Files (*.txt;*.csv;*.log;*.md;*.pdf;*.xml;*.json)|*.txt;*.csv;*.log;*.md;*.pdf;*.xml;*.json");
 
-        var fiter = sbFilters.ToString();
+        return ShowSelectionFileDialog(sbFilters.ToString());
+    }
 
-        ofd.Filter = sbFilters.ToString();
+    public string ShowSelectionFileDialog(string extensionFilter) {
+        var ofd = new OpenFileDialog();
+
+        ofd.Filter = extensionFilter;
         if (ofd.ShowDialog() == true) {
             return ofd.FileName;
         }

@@ -178,7 +178,15 @@
 				</Grid.ColumnDefinitions>-->
 
 				<!-- Change background color to inverted surface -->
-				<uc:TextBoxInputPrompt />
+				<uc:TextBoxInputPrompt>
+					<behaviours:Interaction.Triggers>
+						<behaviours:EventTrigger EventName="AttachedResourceNotAllowed">
+							<behaviours:InvokeCommandAction Command="{Binding AttachedResourceNotAllowedCommand}"
+															EventArgsParameterPath="Message"
+															PassEventArgsToCommand="True" />
+						</behaviours:EventTrigger>
+					</behaviours:Interaction.Triggers>
+				</uc:TextBoxInputPrompt>
 				<!--<TextBox Grid.Column="0"
 						 Name="inputTextBox"
 						 Margin="5"

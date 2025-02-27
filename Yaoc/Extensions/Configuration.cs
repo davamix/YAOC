@@ -4,6 +4,10 @@ using Yaoc.ViewModels;
 using Yaoc.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Yaoc.Dialogs;
+using System.Security.Policy;
+using Yaoc.Core.Plugins;
+using Yaoc.Core.Data.Sqlite;
+using Microsoft.Extensions.Hosting;
 
 namespace Yaoc.Extensions;
 public static class Configuration {
@@ -45,4 +49,9 @@ public static class Configuration {
 
         return services;
     }
+
+    //public static IServiceCollection RegisterPlugins(this IServiceCollection services) {
+    //    services.AddSingleton<IPluginsLoader, PluginsLoader>();
+    //    return services;
+    //}
 }

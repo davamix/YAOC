@@ -35,5 +35,5 @@ public interface IStorageProvider
     /// <param name="conversationId"></param>
     /// <returns>Return a completed Task</returns>
     Task DeleteConversation(string conversationId);
-    
+
 }

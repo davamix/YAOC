@@ -25,5 +25,9 @@ public partial class MainViewModel : BaseViewModel {
         WeakReferenceMessenger.Default.Register<MainViewModel, ModelDeletedMessage>(this, (r, m) => {
             NotificationMessageQueue.Enqueue(m.Message);
         });
+
+        WeakReferenceMessenger.Default.Register<MainViewModel, AttachResourceNotAllowedMessage>(this, (r, m) => {
+            NotificationMessageQueue.Enqueue(m.Value);
+        });
     }
 }

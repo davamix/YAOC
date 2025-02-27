@@ -30,14 +30,20 @@ public partial class ListViewItemMessage : ListViewItem {
 
             if (context != null) {
                 var lvimTemplate = CreateListViewItemMessageTemplate();
-                var messageParts = ExtractMessageParts(context.OllamaMessage.Content);
+                var messageParts = ExtractMessageParts(context.Message);
                 var messageBlock = CreateMessageBlock(messageParts, context.OllamaMessage.Role);
+
+                if (context.AttachedResources.Any()) {
+                    AttachFilesToBlock(context.AttachedResources, messageBlock);
+                }
 
                 this.Template = lvimTemplate;
                 this.Content = messageBlock;
             }
         }
     }
+
+    
 
     private ControlTemplate CreateListViewItemMessageTemplate() {
         ControlTemplate template = new ControlTemplate(typeof(ListViewItemMessage));
@@ -103,7 +109,6 @@ public partial class ListViewItemMessage : ListViewItem {
 
     private UIElement CreateMessageBlock(IEnumerable<ContentMessage> messages, ChatRole? role) {
         var mainStack = new StackPanel();
-
         bool hasTopBorder = true;
 
         foreach (var cm in messages) {
@@ -118,6 +123,32 @@ public partial class ListViewItemMessage : ListViewItem {
         }
 
         return mainStack;
+    }
+
+    private void AttachFilesToBlock(List<MessageResource> attachedResources, UIElement messageBlock) {
+        foreach(var resource in attachedResources) {
+            var border = new Border {
+                BorderThickness = new Thickness(5, 0, 0, 0),
+                BorderBrush = new SolidColorBrush(_theme.SecondaryDark.Color),
+                Background = new SolidColorBrush(SwatchHelper.Lookup[MaterialDesignColor.BlueGrey100]),
+                Margin = new Thickness(5),
+                Padding = new Thickness(5)
+            };
+            
+            var fileBlock = new TextBlock {
+                Inlines = {
+                    new Hyperlink(new Run(resource.Name)) {
+                        NavigateUri = new Uri(resource.Path),
+                        Style = FindResource("MaterialDesignBody2Hyperlink") as Style
+                    }
+                },
+                ToolTip = resource.Path
+            };
+
+            border.Child = fileBlock;
+
+            ((StackPanel)messageBlock).Children.Add(border);
+        }
     }
 
     private Paragraph CreateMessageParagraph(ChatRole? role, bool hasTopBorder, ContentMessage cm) {

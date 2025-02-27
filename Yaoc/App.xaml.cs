@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using System.Windows;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
+using Yaoc.Core.Plugins;
 
 namespace Yaoc {
     /// <summary>
@@ -24,12 +25,15 @@ namespace Yaoc {
                     services.RegisterViews();
                     services.RegisterDialogs();
                     services.RegisterProviders();
+                    //services.RegisterPlugins();
                 })
                 .Build();
         }
 
         protected override void OnStartup(StartupEventArgs e) {
             base.OnStartup(e);
+
+            PluginsLoader.Initialize(Host.Services.GetService<IConfiguration>());
 
             var mainWindow = Host.Services.GetService<MainWindow>();
             mainWindow?.Show();

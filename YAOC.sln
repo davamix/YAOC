@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yaoc", "Yaoc\Yaoc.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yaoc.Core", "Yaoc.Core\Yaoc.Core.csproj", "{4BBDE0B3-8C44-4D5F-B17E-7BE9AEAE138F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yaoc.Plugins", "Yaoc.Plugins\Yaoc.Plugins.csproj", "{6C991F01-C0A4-4AC9-AA8A-AF1A1B2D4DBE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yaoc.Plugins.PlainText", "Yaoc.Plugins.PlainText\Yaoc.Plugins.PlainText.csproj", "{FCCCC04E-6CEA-411D-B406-0FFCF4951EAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,9 +27,21 @@ Global
 		{4BBDE0B3-8C44-4D5F-B17E-7BE9AEAE138F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BBDE0B3-8C44-4D5F-B17E-7BE9AEAE138F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BBDE0B3-8C44-4D5F-B17E-7BE9AEAE138F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C991F01-C0A4-4AC9-AA8A-AF1A1B2D4DBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C991F01-C0A4-4AC9-AA8A-AF1A1B2D4DBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C991F01-C0A4-4AC9-AA8A-AF1A1B2D4DBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C991F01-C0A4-4AC9-AA8A-AF1A1B2D4DBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCCCC04E-6CEA-411D-B406-0FFCF4951EAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCCCC04E-6CEA-411D-B406-0FFCF4951EAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCCCC04E-6CEA-411D-B406-0FFCF4951EAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCCCC04E-6CEA-411D-B406-0FFCF4951EAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6C991F01-C0A4-4AC9-AA8A-AF1A1B2D4DBE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{FCCCC04E-6CEA-411D-B406-0FFCF4951EAD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A852B76B-89A6-45F1-9B5A-DDBED33CCFB6}

@@ -55,6 +55,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Yaoc.Core\Yaoc.Core.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if not exist &quot;$(TargetDir)Plugins&quot; mkdir &quot;$(TargetDir)Plugins&quot;" />
+  </Target>
   
   
 

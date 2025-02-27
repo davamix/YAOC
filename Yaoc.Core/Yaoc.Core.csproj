@@ -17,4 +17,8 @@
     <PackageReference Include="OllamaSharp" Version="5.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Yaoc.Plugins\Yaoc.Plugins.csproj" />
+  </ItemGroup>
+
 </Project>

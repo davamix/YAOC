@@ -9,5 +9,4 @@
 			  mc:Ignorable="d"
 			  HorizontalContentAlignment="Stretch"
 			  Loaded="ListViewItem_Loaded">
-
 </ListViewItem>

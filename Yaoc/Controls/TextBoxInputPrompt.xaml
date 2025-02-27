@@ -129,11 +129,11 @@
 					  Margin="5">
 
 			<ItemsControl x:Name="attachedFilesList"
-						  ItemsSource="{Binding AttachedFiles}">
+						  ItemsSource="{Binding AttachedResources}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding}"
+							<TextBlock Text="{Binding Path}"
 									   VerticalAlignment="Center"
 									   Style="{StaticResource MaterialDesignBody2TextBlock}" />
 							<Button Content="{md:PackIcon Kind=TrashCanOutline}"
