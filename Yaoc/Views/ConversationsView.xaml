@@ -1,8 +1,8 @@
 ﻿<UserControl x:Class="Yaoc.Views.ConversationsView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
 			 xmlns:local="clr-namespace:Yaoc.Views"
 			 xmlns:converters="clr-namespace:Yaoc.Converters"
@@ -16,178 +16,194 @@
 		<converters:StringToVisibilityConverter x:Key="stringToVisibilityConverter" />
 		<converters:ConversationToVisibilityConverter x:Key="conversationToVisibilityConverter" />
 		<converters:RoleToColorConverter x:Key="roleToColorConverter" />
-		
+
 		<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
 	</UserControl.Resources>
 
-	<Grid Margin="14">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="300" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
+	<Grid  Margin="24">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
 
-		<!-- Conversation List -->
-		<Grid Grid.Column="0"
-		Margin="-5,0,10,0">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
+		<TextBlock Grid.Row="0"
+				   Text="Conversations"
+				   Style="{StaticResource MaterialDesignHeadline4TextBlock}" />
 
-			<ListView Grid.Row="0"
-					  x:Name="conversationsList"
-					  ItemsSource="{Binding Conversations}"
-					  SelectedItem="{Binding CurrentConversation}">
-				<ListView.Resources>
-					<Style TargetType="ListViewItem">
-						<Setter Property="Template">
-							<Setter.Value>
-								<ControlTemplate TargetType="ListViewItem">
-									<Border Margin="0"
-											Padding="0" />
-								</ControlTemplate>
-							</Setter.Value>
-						</Setter>
-					</Style>
-				</ListView.Resources>
-				<ListView.ItemContainerStyle>
-					<Style TargetType="ListViewItem"
-						   BasedOn="{StaticResource MaterialDesignListBoxItem}">
-						<Setter Property="HorizontalContentAlignment"
-								Value="Stretch" />
-						<Setter Property="Padding"
-								Value="0" />
-					</Style>
-				</ListView.ItemContainerStyle>
-				<ListView.ItemTemplate>
-					<DataTemplate>
-						<uc:ListViewItemConversation x:Name="editableItem">
-							<behaviours:Interaction.Triggers>
-								<behaviours:EventTrigger EventName="ConversationNameChanged">
-									<behaviours:InvokeCommandAction Command="{Binding DataContext.ChangeConversationNameCommand, ElementName=conversationsList}"
-																	EventArgsParameterPath="ConversationName"
-																	PassEventArgsToCommand="True" />
-								</behaviours:EventTrigger>
-							</behaviours:Interaction.Triggers>
-						</uc:ListViewItemConversation>
-					</DataTemplate>
-				</ListView.ItemTemplate>
-			</ListView>
-			<Button Grid.Row="1"
-					Content="{md:PackIcon Kind=ChatPlus, Size=26}"
-					Style="{StaticResource MaterialDesignFlatMidBgButton}"
-					VerticalAlignment="Bottom"
-					Margin="3"
-					Command="{Binding CreateConversationCommand}">
-				<Button.ToolTip>
-					<ToolTip>
-						<TextBlock Text="Start a new chat" />
-					</ToolTip>
-				</Button.ToolTip>
-			</Button>
-		</Grid>
+		<Separator Grid.Row="1"
+				   Grid.Column="0"
+				   Grid.ColumnSpan="2"
+				   Margin="0,5,0,15" />
 
-		<GridSplitter Grid.Column="0"
-					  VerticalAlignment="Stretch"
-					  HorizontalAlignment="Right"
-					  Background="LightGray"
-					  ShowsPreview="True"
-					  Width="3"/>
+		<Grid Grid.Row="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="300" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
 
-		<!-- Conversation selected -->
-		<Grid Grid.Column="1"
-			  Visibility="{Binding SelectedItem,ElementName=conversationsList,Converter={StaticResource conversationToVisibilityConverter}}">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
+			<!-- Conversation List -->
+			<Grid Grid.Column="0"
+				  Margin="-15,0,10,0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
 
-			<TextBlock Grid.Row="0"
-					   Text="{Binding CurrentConversation.Id, StringFormat=ID: {0}}"
-					   Style="{DynamicResource MaterialDesignLabelSmallTextBlock}" />
-
-			<!-- Model selection -->
-			<Grid Grid.Row="1"
-				  Margin="10">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-
-				<TextBlock Grid.Column="0"
-						   Text="Select model:"
-						   Margin="0,0,5,0"
-						   VerticalAlignment="Center" />
-
-				<ComboBox Grid.Column="1"
-						  Name="userComboBox"
-						  ItemsSource="{Binding Models}"
-						  HorizontalAlignment="Stretch"
-						  SelectedItem="{Binding SelectedModel}" />
-
+				<ListView Grid.Row="0"
+						  x:Name="conversationsList"
+						  ItemsSource="{Binding Conversations}"
+						  SelectedItem="{Binding CurrentConversation}">
+					<ListView.Resources>
+						<Style TargetType="ListViewItem">
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="ListViewItem">
+										<Border Margin="0"
+												Padding="0" />
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</ListView.Resources>
+					<ListView.ItemContainerStyle>
+						<Style TargetType="ListViewItem"
+							   BasedOn="{StaticResource MaterialDesignListBoxItem}">
+							<Setter Property="HorizontalContentAlignment"
+									Value="Stretch" />
+							<Setter Property="Padding"
+									Value="0" />
+						</Style>
+					</ListView.ItemContainerStyle>
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<uc:ListViewItemConversation x:Name="editableItem">
+								<behaviours:Interaction.Triggers>
+									<behaviours:EventTrigger EventName="ConversationNameChanged">
+										<behaviours:InvokeCommandAction Command="{Binding DataContext.ChangeConversationNameCommand, ElementName=conversationsList}"
+																		EventArgsParameterPath="ConversationName"
+																		PassEventArgsToCommand="True" />
+									</behaviours:EventTrigger>
+								</behaviours:Interaction.Triggers>
+							</uc:ListViewItemConversation>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+				<Button Grid.Row="1"
+						Content="{md:PackIcon Kind=ChatPlus, Size=26}"
+						Style="{StaticResource MaterialDesignFlatMidBgButton}"
+						VerticalAlignment="Bottom"
+						Margin="3"
+						Command="{Binding CreateConversationCommand}">
+					<Button.ToolTip>
+						<ToolTip>
+							<TextBlock Text="Start a new chat" />
+						</ToolTip>
+					</Button.ToolTip>
+				</Button>
 			</Grid>
 
-			<!-- Messages Section -->
+			<GridSplitter Grid.Column="0"
+						  VerticalAlignment="Stretch"
+						  HorizontalAlignment="Right"
+						  Background="LightGray"
+						  ShowsPreview="True"
+						  Width="3" />
 
-			<ScrollViewer x:Name="messagesScrollbar"
-						  Grid.Row="2"
-						  Margin="5"
-						  VirtualizingPanel.ScrollUnit="Pixel"
-						  HorizontalScrollBarVisibility="Disabled">
-				<behaviours:Interaction.Behaviors>
-					<customBehaviours:ScrollBarAutoBehavior />
-				</behaviours:Interaction.Behaviors>
-				<StackPanel>
-					<ItemsControl ItemsSource="{Binding CurrentConversation.Messages}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<uc:ListViewItemMessage DataContext="{Binding}" />
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
+			<!-- Conversation selected -->
+			<Grid Grid.Column="1"
+				  Visibility="{Binding SelectedItem,ElementName=conversationsList,Converter={StaticResource conversationToVisibilityConverter}}">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
 
-					<!-- Bot textbox -->
-					<TextBox Text="{Binding BotMessage,Mode=OneWay}"
-							 AcceptsReturn="True"
-							 TextWrapping="Wrap"
-							 Height="Auto"
-							 Background="Gainsboro"
-							 Visibility="{Binding BotMessage,Converter={StaticResource stringToVisibilityConverter}}" />
+				<TextBlock Grid.Row="0"
+						   Text="{Binding CurrentConversation.Id, StringFormat=ID: {0}}"
+						   Style="{DynamicResource MaterialDesignLabelSmallTextBlock}" />
 
-					<ProgressBar IsIndeterminate="True"
-								 Style="{StaticResource MaterialDesignCircularProgressBar}"
-								 Value="0"
-								 Visibility="{Binding IsWaitingForResponse,Converter={StaticResource booleanToVisibilityConverter}}" />
+				<!-- Model selection -->
+				<Grid Grid.Row="1"
+					  Margin="10">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
 
-					<TextBlock Text="{Binding ErrorMessage}"
-							   Background="Tomato"
-							   Visibility="{Binding ErrorMessage, Converter={StaticResource stringToVisibilityConverter}}" />
+					<TextBlock Grid.Column="0"
+							   Text="Select model:"
+							   Margin="0,0,5,0"
+							   VerticalAlignment="Center" />
 
-				</StackPanel>
-			</ScrollViewer>
+					<ComboBox Grid.Column="1"
+							  Name="userComboBox"
+							  ItemsSource="{Binding Models}"
+							  HorizontalAlignment="Stretch"
+							  SelectedItem="{Binding SelectedModel}" />
 
-			<!-- Input Section -->
-			<Grid Grid.Row="3">
-				<!--<Grid.ColumnDefinitions>
+				</Grid>
+
+				<!-- Messages Section -->
+
+				<ScrollViewer x:Name="messagesScrollbar"
+							  Grid.Row="2"
+							  Margin="5"
+							  VirtualizingPanel.ScrollUnit="Pixel"
+							  HorizontalScrollBarVisibility="Disabled">
+					<behaviours:Interaction.Behaviors>
+						<customBehaviours:ScrollBarAutoBehavior />
+					</behaviours:Interaction.Behaviors>
+					<StackPanel>
+						<ItemsControl ItemsSource="{Binding CurrentConversation.Messages}">
+							<ItemsControl.ItemTemplate>
+								<DataTemplate>
+									<uc:ListViewItemMessage DataContext="{Binding}" />
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+
+						<!-- Bot textbox -->
+						<TextBox Text="{Binding BotMessage,Mode=OneWay}"
+								 AcceptsReturn="True"
+								 TextWrapping="Wrap"
+								 Height="Auto"
+								 Background="Gainsboro"
+								 Visibility="{Binding BotMessage,Converter={StaticResource stringToVisibilityConverter}}" />
+
+						<ProgressBar IsIndeterminate="True"
+									 Style="{StaticResource MaterialDesignCircularProgressBar}"
+									 Value="0"
+									 Visibility="{Binding IsWaitingForResponse,Converter={StaticResource booleanToVisibilityConverter}}" />
+
+						<TextBlock Text="{Binding ErrorMessage}"
+								   Background="Tomato"
+								   Visibility="{Binding ErrorMessage, Converter={StaticResource stringToVisibilityConverter}}" />
+
+					</StackPanel>
+				</ScrollViewer>
+
+				<!-- Input Section -->
+				<Grid Grid.Row="3">
+					<!--<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>-->
 
-				<!-- Change background color to inverted surface -->
-				<uc:TextBoxInputPrompt>
-					<behaviours:Interaction.Triggers>
-						<behaviours:EventTrigger EventName="AttachedResourceNotAllowed">
-							<behaviours:InvokeCommandAction Command="{Binding AttachedResourceNotAllowedCommand}"
-															EventArgsParameterPath="Message"
-															PassEventArgsToCommand="True" />
-						</behaviours:EventTrigger>
-					</behaviours:Interaction.Triggers>
-				</uc:TextBoxInputPrompt>
-				<!--<TextBox Grid.Column="0"
+					<!-- Change background color to inverted surface -->
+					<uc:TextBoxInputPrompt>
+						<behaviours:Interaction.Triggers>
+							<behaviours:EventTrigger EventName="AttachedResourceNotAllowed">
+								<behaviours:InvokeCommandAction Command="{Binding AttachedResourceNotAllowedCommand}"
+																EventArgsParameterPath="Message"
+																PassEventArgsToCommand="True" />
+							</behaviours:EventTrigger>
+						</behaviours:Interaction.Triggers>
+					</uc:TextBoxInputPrompt>
+					<!--<TextBox Grid.Column="0"
 						 Name="inputTextBox"
 						 Margin="5"
 						 MaxHeight="100"
@@ -230,14 +246,10 @@
 						Style="{StaticResource MaterialDesignFloatingActionButton}"
 						IsEnabled="{Binding SelectedModel,Converter={StaticResource emptyStringToBooleanConverter}}"
 						Command="{Binding SendMessageCommand}" />-->
+				</Grid>
+
 			</Grid>
 
 		</Grid>
-
-		
-
-
-		
-
 	</Grid>
 </UserControl>

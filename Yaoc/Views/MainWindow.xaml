@@ -26,7 +26,7 @@
 						Style="{StaticResource MaterialDesignNavigationRailTabControl}"
 						TabStripPlacement="Left">
 				<!-- Conversations -->
-				<TabItem>
+				<TabItem Width="150">
 					<TabItem.Header>
 						<StackPanel Width="Auto"
 									Height="Auto">
@@ -34,7 +34,7 @@
 										 Width="24"
 										 Height="24"
 										 HorizontalAlignment="Center" />
-							<TextBlock Text="Chats"
+							<TextBlock Text="Conversations"
 									   HorizontalAlignment="Center" />
 						</StackPanel>
 					</TabItem.Header>
@@ -43,7 +43,7 @@
 				</TabItem>
 
 				<!-- Models -->
-				<TabItem>
+				<TabItem Width="150">
 					<TabItem.Header>
 						<StackPanel Width="Auto"
 									Height="Auto">
@@ -60,7 +60,7 @@
 				</TabItem>
 
 				<!-- Settings -->
-				<TabItem>
+				<TabItem  Width="150">
 					<TabItem.Header>
 						<StackPanel Width="Auto"
 									Height="Auto">
@@ -74,6 +74,21 @@
 					</TabItem.Header>
 
 					<views:SettingsView />
+				</TabItem>
+
+				<!-- Knowledge -->
+				<TabItem Width="150">
+					<TabItem.Header>
+						<StackPanel Width="Auto"
+									Height="Auto">
+							<md:PackIcon Kind="TextBoxMultiple"
+										 Width="24"
+										 Height="24"
+										 HorizontalAlignment="Center" />
+							<TextBlock Text="Knowledge"
+									   HorizontalAlignment="Center"/>
+						</StackPanel>
+					</TabItem.Header>
 				</TabItem>
 			</TabControl>
 		</md:Card>
