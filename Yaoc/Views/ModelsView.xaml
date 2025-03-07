@@ -95,7 +95,6 @@
 
 			<!-- Info model panel -->
 			<Grid Grid.Column="1"
-				  
 				  Visibility="{Binding SelectedItem, ElementName=localModelList, Converter={StaticResource selectedItemVisibilityConverter}}">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />

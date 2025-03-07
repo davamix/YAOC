@@ -26,6 +26,7 @@ public static class Configuration {
         services.AddScoped<ConversationsViewModel>();
         services.AddScoped<SettingsViewModel>();
         services.AddScoped<ModelsViewModel>();
+        services.AddScoped<KnowledgeViewModel>();
 
         return services;
     }
@@ -35,6 +36,7 @@ public static class Configuration {
         services.AddSingleton<ConversationsView>();
         services.AddSingleton<SettingsView>();
         services.AddSingleton<ModelsView>();
+        services.AddSingleton<KnowledgeView>();
 
         return services;
     }

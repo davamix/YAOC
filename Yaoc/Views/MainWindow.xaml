@@ -59,6 +59,23 @@
 					<views:ModelsView />
 				</TabItem>
 
+				<!-- Knowledge -->
+				<TabItem Width="150">
+					<TabItem.Header>
+						<StackPanel Width="Auto"
+									Height="Auto">
+							<md:PackIcon Kind="TextBoxMultiple"
+										 Width="24"
+										 Height="24"
+										 HorizontalAlignment="Center" />
+							<TextBlock Text="Knowledge"
+									   HorizontalAlignment="Center" />
+						</StackPanel>
+					</TabItem.Header>
+
+					<views:KnowledgeView />
+				</TabItem>
+
 				<!-- Settings -->
 				<TabItem  Width="150">
 					<TabItem.Header>
@@ -76,20 +93,6 @@
 					<views:SettingsView />
 				</TabItem>
 
-				<!-- Knowledge -->
-				<TabItem Width="150">
-					<TabItem.Header>
-						<StackPanel Width="Auto"
-									Height="Auto">
-							<md:PackIcon Kind="TextBoxMultiple"
-										 Width="24"
-										 Height="24"
-										 HorizontalAlignment="Center" />
-							<TextBlock Text="Knowledge"
-									   HorizontalAlignment="Center"/>
-						</StackPanel>
-					</TabItem.Header>
-				</TabItem>
 			</TabControl>
 		</md:Card>
 
