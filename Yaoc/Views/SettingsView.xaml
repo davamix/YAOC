@@ -5,6 +5,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:local="clr-namespace:Yaoc.Views"
 			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:sys="clr-namespace:System;assembly=mscorlib"
 			 mc:Ignorable="d">
 
 	<Grid Margin="24">
@@ -34,7 +35,13 @@
 						<ColumnDefinition Width="Auto" />
 					</Grid.ColumnDefinitions>
 
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition />
+					</Grid.RowDefinitions>
+
 					<TextBox Grid.Column="0"
+							 Grid.Row="0"
 							 VerticalAlignment="Center"
 							 md:HintAssist.Hint="Ollama Server Url"
 							 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
@@ -42,18 +49,19 @@
 							 Text="{Binding OllamaServerUrl}" />
 
 					<md:Badged Grid.Column="1"
+							   Grid.Row="0"
 							   BadgeColorZoneMode="SecondaryMid">
 						<md:Badged.Style>
 							<Style TargetType="md:Badged">
 								<Style.Triggers>
-									<DataTrigger Binding="{Binding IsConnectionValid}"
+									<DataTrigger Binding="{Binding IsOllamaConnectionValid}"
 												 Value="True">
 										<Setter Property="Badge"
 												Value="{md:PackIcon Check}" />
 										<Setter Property="BadgeBackground"
 												Value="#00b23e" />
 									</DataTrigger>
-									<DataTrigger Binding="{Binding IsConnectionValid}"
+									<DataTrigger Binding="{Binding IsOllamaConnectionValid}"
 												 Value="False">
 										<Setter Property="Badge"
 												Value="{md:PackIcon Exclamation}" />
@@ -66,7 +74,43 @@
 						<Button Content="Test"
 								Style="{StaticResource MaterialDesignRaisedButton}"
 								Margin="5"
-								Command="{Binding TestConnectionCommand}" />
+								Command="{Binding TestOllamaConnectionCommand}" />
+					</md:Badged>
+					<TextBox Grid.Column="0"
+							 Grid.Row="1"
+							 VerticalAlignment="Center"
+							 md:HintAssist.Hint="ChromaDb Server Url"
+							 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+							 Margin="5"
+							 Text="{Binding ChromaDbServerUrl}" />
+
+					<md:Badged Grid.Column="1"
+							   Grid.Row="1"
+							   BadgeColorZoneMode="SecondaryMid">
+						<md:Badged.Style>
+							<Style TargetType="md:Badged">
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding IsChromaDbConnectionValid}"
+												 Value="True">
+										<Setter Property="Badge"
+												Value="{md:PackIcon Check}" />
+										<Setter Property="BadgeBackground"
+												Value="#00b23e" />
+									</DataTrigger>
+									<DataTrigger Binding="{Binding IsChromaDbConnectionValid}"
+												 Value="False">
+										<Setter Property="Badge"
+												Value="{md:PackIcon Exclamation}" />
+										<Setter Property="BadgeBackground"
+												Value="#f85e2e" />
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</md:Badged.Style>
+						<Button Content="Test"
+								Style="{StaticResource MaterialDesignRaisedButton}"
+								Margin="5"
+								Command="{Binding TestChromaDbConnectionCommand}" />
 					</md:Badged>
 				</Grid>
 			</TabItem>

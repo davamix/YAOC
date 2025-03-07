@@ -8,6 +8,7 @@ using System.Security.Policy;
 using Yaoc.Core.Plugins;
 using Yaoc.Core.Data.Sqlite;
 using Microsoft.Extensions.Hosting;
+using Yaoc.Core.Data.ChromaDb;
 
 namespace Yaoc.Extensions;
 public static class Configuration {
@@ -15,6 +16,7 @@ public static class Configuration {
         services.AddSingleton<IOllamaService, OllamaService>();
         services.AddSingleton<IDialogManager, DialogManager>();
         services.AddSingleton<IConversationsService, ConversationsService>();
+        services.AddSingleton<IChromaDbService, ChromaDbService>();
 
         return services;
     }
@@ -46,6 +48,7 @@ public static class Configuration {
     public static IServiceCollection RegisterProviders(this IServiceCollection services) {
         //services.AddSingleton<IStorageProvider, FileSystemProvider>();
         services.AddSingleton<IStorageProvider, SqliteProvider>();
+        services.AddSingleton<IChromaDbProvider, ChromaDbProvider>();
 
         return services;
     }

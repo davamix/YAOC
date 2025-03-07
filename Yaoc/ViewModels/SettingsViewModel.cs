@@ -11,32 +11,45 @@ namespace Yaoc.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject {
     private readonly IOllamaService _ollamaService;
+    private readonly IChromaDbService _chromaDbService;
     private readonly IConfiguration _configuration;
 
     [ObservableProperty]
     private string _ollamaServerUrl;
-
     [ObservableProperty]
-    private bool? _isConnectionValid;
+    private bool? _isOllamaConnectionValid;
+    [ObservableProperty]
+    private string _chromaDbServerUrl;
+    [ObservableProperty]
+    private bool? _isChromaDbConnectionValid;
 
     public ObservableCollection<Plugin> PluginsAvailable { get; private set; } = new();
 
     public SettingsViewModel(
         IOllamaService ollamaService,
+        IChromaDbService chromaDbService,
         IConfiguration configuration) {
 
         _ollamaService = ollamaService;
+        _chromaDbService = chromaDbService;
         _configuration = configuration;
 
         OllamaServerUrl = _configuration["AppSettings:OllamaServer"];
+        ChromaDbServerUrl = _configuration["AppSettings:ChromaDb:Server"];
 
         LoadPluginsAvailable();
     }
 
     [RelayCommand]
-    public async Task TestConnection() {
-        IsConnectionValid = await _ollamaService.TestConnection(OllamaServerUrl);
-        RefreshProperty(nameof(IsConnectionValid));
+    public async Task TestOllamaConnection() {
+        IsOllamaConnectionValid = await _ollamaService.TestConnection(OllamaServerUrl);
+        RefreshProperty(nameof(IsOllamaConnectionValid));
+    }
+
+    [RelayCommand]
+    public async Task TestChromaDbConnection() {
+        IsChromaDbConnectionValid = await _chromaDbService.TestConnection(ChromaDbServerUrl);
+        RefreshProperty(nameof(IsChromaDbConnectionValid));
     }
 
     private void LoadPluginsAvailable() {
