@@ -17,6 +17,7 @@ public static class Configuration {
         services.AddSingleton<IDialogManager, DialogManager>();
         services.AddSingleton<IConversationsService, ConversationsService>();
         services.AddSingleton<IChromaDbService, ChromaDbService>();
+        services.AddSingleton<IKnowledgeService, KnoledgeService>();
 
         return services;
     }

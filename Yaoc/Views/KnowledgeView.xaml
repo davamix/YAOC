@@ -5,6 +5,8 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:local="clr-namespace:Yaoc.Views"
 			 xmlns:uc="clr-namespace:Yaoc.Controls"
+			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
 			 mc:Ignorable="d">
 
 	<Grid Margin="24">
@@ -25,33 +27,87 @@
 
 		<Grid Grid.Row="2">
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="300" />
 				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="2*" />
 			</Grid.ColumnDefinitions>
 
-			<StackPanel Grid.Row="0">
-				<TextBlock Text="Collections"
+			<Grid Grid.Column="0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+
+				<TextBlock Grid.Row="0"
+						   Text="Collections"
 						   Style="{StaticResource MaterialDesignHeadline5TextBlock}" />
 
-				<ListView x:Name="collectionList"
+				<!-- Collections -->
+				<ListView Grid.Row="1"
+						  x:Name="collectionList"
 						  ItemsSource="{Binding Collections}"
-						  Margin="12">
+						  SelectedItem="{Binding SelectedCollection}"
+						  Margin="0,12,12,0">
+					<ListView.Resources>
+						<Style TargetType="ListViewItem">
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="ListViewItem">
+										<Border Margin="0"
+												Padding="0" />
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</ListView.Resources>
+					<ListView.ItemContainerStyle>
+						<Style TargetType="ListViewItem"
+							   BasedOn="{StaticResource MaterialDesignListBoxItem}">
+							<Setter Property="HorizontalContentAlignment"
+									Value="Stretch" />
+							<Setter Property="Padding"
+									Value="0" />
+						</Style>
+					</ListView.ItemContainerStyle>
 					<ListView.ItemTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding}"
-									   Style="{StaticResource MaterialDesignBody1TextBlock}" />
+							<uc:ListViewItemCollection>
+								<behaviours:Interaction.Triggers>
+									<behaviours:EventTrigger EventName="CollectionNameChanged">
+										<behaviours:InvokeCommandAction Command="{Binding DataContext.ChangeCollectionNameCommand, ElementName=collectionList}"
+																		EventArgsParameterPath="CollectionName"
+																		PassEventArgsToCommand="True" />
+									</behaviours:EventTrigger>
+								</behaviours:Interaction.Triggers>
+							</uc:ListViewItemCollection>
 						</DataTemplate>
 					</ListView.ItemTemplate>
 				</ListView>
-			</StackPanel>
+
+				<Button Grid.Row="2"
+						Content="{md:PackIcon Kind=Bookshelf, Size=26}"
+						Style="{StaticResource MaterialDesignFlatMidBgButton}"
+						VerticalAlignment="Bottom"
+						Command="{Binding CreateCollectionCommand}">
+					<Button.ToolTip>
+						<ToolTip>
+							<TextBlock Text="Create new collection" />
+						</ToolTip>
+					</Button.ToolTip>
+				</Button>
+
+			</Grid>
 
 			<GridSplitter Grid.Column="0"
+						  Grid.Row="0"
+						  Grid.RowSpan="2"
 						  VerticalAlignment="Stretch"
 						  HorizontalAlignment="Right"
 						  Background="#FFD8D8D8"
 						  ShowsPreview="True"
 						  Width="3" />
 
+			<!-- Documents -->
 			<StackPanel Grid.Column="1">
 				<TextBlock Text="Documents"
 						   Style="{StaticResource MaterialDesignHeadline5TextBlock}" />

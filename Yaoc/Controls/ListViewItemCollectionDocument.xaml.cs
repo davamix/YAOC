@@ -18,8 +18,7 @@ namespace Yaoc.Controls
     /// <summary>
     /// Interaction logic for ListViewItemCollectionDocument.xaml
     /// </summary>
-    public partial class ListViewItemCollectionDocument : UserControl
-    {
+    public partial class ListViewItemCollectionDocument : ListViewItem {
         public ListViewItemCollectionDocument()
         {
             InitializeComponent();

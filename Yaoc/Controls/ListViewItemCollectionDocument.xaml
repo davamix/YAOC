@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Yaoc.Controls.ListViewItemCollectionDocument"
+﻿<ListViewItem x:Class="Yaoc.Controls.ListViewItemCollectionDocument"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,7 +6,8 @@
 			 xmlns:local="clr-namespace:Yaoc.Controls"
 			 xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d"
-			 Padding="12,5,5,5">
+			 Padding="12,5,5,5"
+			  Style="{DynamicResource MaterialDesignListBoxItem}">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
@@ -46,6 +47,11 @@
 					Command="{Binding ElementName=documentList,Path=DataContext.GenerateEmbeddingsCommand}"
 					CommandParameter="{Binding}"
 					ToolTip="Metadata" />
+			<Button Content="{md:PackIcon Kind=TrashCanOutline}"
+					Style="{DynamicResource MaterialDesignFlatButton}"
+					Command="{Binding ElementName=documentList,Path=DataContext.GenerateEmbeddingsCommand}"
+					CommandParameter="{Binding}"
+					ToolTip="Remove" />
 		</StackPanel>
 	</Grid>
-</UserControl>
+</ListViewItem>

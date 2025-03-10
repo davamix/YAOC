@@ -30,13 +30,20 @@
 
 		<Grid Grid.Row="2">
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="300" />
 				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="2*" />
 			</Grid.ColumnDefinitions>
 
 			<!-- Model Lists -->
-			<StackPanel Grid.Row="0">
-				<StackPanel Orientation="Horizontal">
+			<Grid Grid.Column="0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+
+				<StackPanel Grid.Row="0" Orientation="Horizontal">
 					<TextBlock Text="Local models"
 							   Style="{StaticResource MaterialDesignHeadline5TextBlock}" />
 					<Button Content="{md:PackIcon Kind=Refresh}"
@@ -45,10 +52,9 @@
 							Command="{Binding RefreshLocalModelsCommand}"/>
 				</StackPanel>
 				
-
-				<ListView x:Name="localModelList"
+				<ListView Grid.Row="1" x:Name="localModelList"
 						  ItemsSource="{Binding LocalModels}"
-						  Margin="12">
+						  Margin="0,12,12,0">
 					<ListView.Resources>
 						<Style TargetType="ListViewItem">
 							<Setter Property="Template">
@@ -77,14 +83,14 @@
 					</ListView.ItemTemplate>
 				</ListView>
 
-				<TextBlock Text="Ollama library"
+				<TextBlock Grid.Row="2" Text="Ollama library"
 						   Style="{StaticResource MaterialDesignHeadline5TextBlock}" />
 
-				<ListView>
+				<ListView Grid.Row="3">
 					<ListViewItem Content="Model A" />
 					<ListViewItem Content="Model B" />
 				</ListView>
-			</StackPanel>
+			</Grid>
 
 			<GridSplitter Grid.Column="0"
 						  VerticalAlignment="Stretch"
