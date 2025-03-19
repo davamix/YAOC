@@ -104,6 +104,8 @@ public partial class ConversationsViewModel : BaseViewModel {
                 SelectedModel = currentModel;
             }
         });
+
+        
     }
 
     private async Task LoadModels() {
@@ -269,6 +271,16 @@ public partial class ConversationsViewModel : BaseViewModel {
         var errorMessage = new AttachResourceNotAllowedMessage(message, SnackbarActions.NoneAction());
 
         base.NotifyErrorMessage(errorMessage);
+    }
+
+    [RelayCommand]
+    private void ResourceAttached(string resourcePaht) {
+        var message = new MessageResource {
+            Path = resourcePaht,
+            Name = Path.GetFileName(resourcePaht)
+        };
+
+        AttachedResources.Add(message);
     }
 
     private async Task ProcessAssistantResponse(string message) {

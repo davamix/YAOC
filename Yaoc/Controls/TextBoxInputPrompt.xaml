@@ -65,7 +65,7 @@
 				Grid.Row="0"
 				Grid.RowSpan="2"
 				BorderThickness="1">
-				<!--Style="{StaticResource DropBorderStyle}"
+			<!--Style="{StaticResource DropBorderStyle}"
 				AllowDrop="True"-->
 
 		</Border>
@@ -79,12 +79,12 @@
 				 TextWrapping="Wrap"
 				 VerticalScrollBarVisibility="Auto"
 				 md:HintAssist.Hint="Write your message"
-				 VerticalContentAlignment="Center"
-				 PreviewDragOver="inputTextBox_PreviewDragOver"
-				 PreviewDrop="inputTextBox_PreviewDrop">
+				 VerticalContentAlignment="Center">
 
 			<behaviours:Interaction.Behaviors>
 				<customBehaviours:TextBoxAddNewLineBehavior />
+				<customBehaviours:TextBoxFileDropBehavior ResourceAttached="TextBoxFileDropBehavior_ResourceAttached"
+														  AttachedResourceNotAllowed="TextBoxFileDropBehavior_AttachedResourceNotAllowed" />
 			</behaviours:Interaction.Behaviors>
 
 			<TextBox.InputBindings>
@@ -110,7 +110,7 @@
 				Margin="5,0,5,0"
 				Content="{md:PackIcon Kind=AttachFile}"
 				Style="{DynamicResource MaterialDesignIconButton}"
-				Command="{Binding OpenAttachFileDialogCommand}"/>
+				Command="{Binding OpenAttachFileDialogCommand}" />
 
 		<Button Grid.Column="2"
 				Grid.Row="0"
