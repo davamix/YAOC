@@ -1,4 +1,4 @@
-# YAOC
+# YAOC (WIP)
 Yet Another Ollama Client. 
 
 This is a desktop application written in C# and WPF to play with your local models.
